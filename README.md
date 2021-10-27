@@ -1,2 +1,33 @@
 # Easyun
-A lightweight cloud portal for AWS users
+A lightweight user portal for AWS Cloud.
+
+## 关于
+Eanyun（易云）侧重于“易”，对功能强大的web console做减法，提供简易用户界面，聚焦云用户最常用的IaaS资源监控管理功能，包括：
+* 云数据中心快速部署
+* 云上资源生命周期管理
+* 云上资源全局视图
+* 账号基本信息 
+* ...
+
+## 功能简介
+1. 初始化云数据中心网络环境
+    * 选择AZ，IP段，子网、路由、公网访问等快速设置；
+2. 云资源创建（IaaS层资源）
+    * 新建云主机(EC2实例)
+    * 新建云存储(S3、卷、文件)
+    * 新建容器(ECS集群)
+    * 新建托管数据库(RDS)
+3. 生命周期管理
+    * 云上资源增、删、改、查
+4. 全局视图
+    * 当前区域资源分布；
+    * 云资源使用情况；
+    * 资产清单列表
+5. 账户管理：
+    * 用户联系方式维护
+    * EC2 keypair管理
+    * AK/SK 管理
+    * Free-tier 到期提醒
+
+## 部署方式
+提供Cloudformation 或 Terraform 模板文件在自有AWS账户种进行独立部署。
