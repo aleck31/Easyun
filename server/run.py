@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 @Description: 
-@LastEditors: aleck
+@LastEditors: 
 '''
 from app import create_app
 

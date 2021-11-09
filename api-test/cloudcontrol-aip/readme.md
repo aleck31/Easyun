@@ -39,7 +39,7 @@ IaaS相关资源类型列表及 ProvisioningType
     - AWS::EFS::MountTarget - FULLY_MUTABLE
 
 * Amazon RDS [TBD]
-    - d
+    - 
     - 
     - 
 
