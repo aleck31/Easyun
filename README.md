@@ -43,3 +43,13 @@ Easyun（易云），侧重于“易”，为AWS提供一个简单易用的云�
 
 ## 部署方式
 提供Cloudformation 或 Terraform 模板文件在自有AWS账户内进行快速独立部署。
+
+## 各个feature的访问地址
+- 在api-test目录下运行 `yarn dev`,如果运行失败请使用`yarn`或`npm install`安装依赖    
+api-test: http://localhsot:8080
+
+- 在`docs`目录下运行 `yarn dev`,如果运行失败请使用`yarn`或`npm install`安装依赖    
+docs: http://localhost:8081
+
+- 在`client`目录下运行 `yarn dev`,如果运行失败请使用`yarn`或`npm install`安装依赖    
+client: http://localhost:8888

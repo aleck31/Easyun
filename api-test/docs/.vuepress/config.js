@@ -4,7 +4,7 @@ module.exports = {
         ['link', { rel: 'icon', href: '/favicon.ico' }]
     ],
     themeConfig: {
-        base: "docs/",
+        base: "README.md/",
         sidebar: [
             "/",
             {

@@ -1,0 +1,21 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    ".": "README.md"
+  },
+  "scripts": {
+    "dev": "vuepress dev .",
+    "build": "vuepress build .",
+    "preview": "http-server .vuepress/dist/"
+  },
+  "keywords": [],
+  "author": "Hu Peng",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.0.0",
+    "vuepress": "^1.8.2"
+  }
+}
