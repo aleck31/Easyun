@@ -1,0 +1,17 @@
+{
+  "name": "api-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs",
+    "preview": "http-server docs/.vuepress/dist/"
+  },
+  "author": "Evan<xiaomo@xiaomo.info>",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^14.0.0",
+    "vuepress": "^1.8.2"
+  }
+}
