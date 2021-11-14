@@ -1,0 +1,8 @@
+# Everything the developer needs in addition to the production requirements
+-r prod.txt
+
+# Testing
+pytest==6.2.5
+WebTest==3.0.0
+factory-boy==3.2.1
+pdbpp==0.10.3
