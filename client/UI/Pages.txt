@@ -1,0 +1,20 @@
+Mode         Length Name
+----         ------ ----
+d-----              素材
+-a----       147630 001.png       login
+-a----       279426 002.png       home  (空资源状态)
+-a----       607187 003.png       home/initial
+-a----       342599 004.png       home/server  (空资源状态)
+-a----      2092858 005.png       home/server/add-server
+-a----       249737 006.png       home/server
+-a----       347255 009a.png      home/storage/<server-id>/instance
+-a----       588660 007.png       home/storage  (空资源状态)
+-a----       497953 008.png       home/storage/add-bucket
+-a----       389648 009.png       home/storage 
+-a----       347255 009a.png      home/storage/<bucket-id>/objects
+-a----       601158 009b.png      home/storage/<bucket-id>/permissions  
+-a----       535811 009c.png      home/storage/<bucket-id>/properties
+-a----       390593 010.png       dashboard
+-a----       516074 011.png       dashboard/list
+-a----       251324 012.png       event
+-a----       420782 013.png       account
