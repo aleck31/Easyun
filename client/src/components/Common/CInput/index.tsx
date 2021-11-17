@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const CInput = (props: Props): JSX.Element => {
-	const classes = classnames('w-10/12', 'h-10','border', 'm-2', 'p-2');
+	const classes = classnames('w-11/12', 'h-12','border','border-gray-400','rounded', 'm-2', 'p-5');
 	const label = classnames( 'mx-2','mt-5');
 	return (
 		<div>

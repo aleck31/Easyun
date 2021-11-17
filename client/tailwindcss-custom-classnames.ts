@@ -10,3 +10,4 @@ export default MyCustomType;
 
 type MyCustomType =
 	| 'bg-yellow-550'
+	| 'bg-yellow-650'

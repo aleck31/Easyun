@@ -29,7 +29,7 @@ const LoginPage = (props: Props): JSX.Element => {
 			<div
 				className={classnames('flex', 'justify-center', 'items-center', 'w-full', 'h-full','mt-36')}>
 				<div id="login-container"
-					 className={classnames('w-2/6', 'border', 'p-8')}>
+					 className={classnames('w-3/12', 'border', 'p-8')}>
 					<div id="login-content">
 						<div id="login-title" className={classnames('m-2','mb-5','font-bold','text-lg')}>
 							{t('Login')}
@@ -44,14 +44,16 @@ const LoginPage = (props: Props): JSX.Element => {
 							label={'Password *'}
 						/>
 
-						<CButton
-							classes={classnames('block', 'w-36', 'h-10', 'bg-yellow-550', 'text-white', 'my-6')}
-							click={() => {
-								login('xiaomo', 'xiaomo123');
-							}}
-						>
-							Login
-						</CButton>
+						<div className={classnames('flex','justify-center')}>
+							<CButton
+								classes={classnames('block', 'w-40', 'h-14', 'bg-yellow-650', 'text-white','font-bold', 'my-6')}
+								click={() => {
+									login('xiaomo', 'xiaomo123');
+								}}
+							>
+								Login
+							</CButton>
+						</div>
 						{/*<CButton click={() => i18n.changeLanguage(lang)}>*/}
 						{/*	{`change to ${lang}`}*/}
 						{/*</CButton>*/}
