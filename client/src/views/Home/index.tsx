@@ -22,7 +22,7 @@ const NoData = (): JSX.Element => {
 			<div>
 				<CButton
 					click={() => history.push('/datacenter')}
-					classes={classnames('bg-yellow-550', 'block', 'text-white', 'rounded-3xl', 'px-5', 'py-10', 'h-11')}>Add
+					classes={classnames('bg-yellow-550', 'block', 'text-white', 'rounded-3xl', 'px-5','py-3')}>Add
                     Datacenter
 				</CButton>
 			</div>
