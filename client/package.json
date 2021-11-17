@@ -12,9 +12,14 @@
     "tailwind": "tailwindcss-classnames -x tailwindcss-custom-classnames.ts -o tailwindcss-classnames.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
+    "@mui/core": "^5.0.0-alpha.54",
+    "@mui/material": "^5.1.1",
+    "@mui/styles": "^5.1.1",
     "@reduxjs/toolkit": "^1.6.1",
     "i18next": "^20.6.1",
     "i18next-browser-languagedetector": "^6.1.2",
@@ -32,6 +37,7 @@
     "variables": "^1.0.1"
   },
   "devDependencies": {
+    "@iconify/react": "^3.1.0",
     "@types/node": "^16.9.0",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
