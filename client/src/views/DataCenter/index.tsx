@@ -40,7 +40,7 @@ const DataCenter = (): JSX.Element => {
 						width="20" height="20" fr={undefined}/>
                     Back</CButton>
 				<CButton click={() => {
-					history.push('/resources');
+					history.push('/resource');
 				}} classes={classnames('bg-yellow-550', 'text-white', 'rounded-2xl', 'w-32', 'px-5')}>Create</CButton>
 			</div>
 

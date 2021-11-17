@@ -13,6 +13,7 @@ import NotFound from '@/views/NotFound';
 const Home = lazy(() => import('@/views/Home'));
 const Login = lazy(() => import('@/views/Login'));
 const DataCenter = lazy(() => import('@/views/DataCenter'));
+const Resource = lazy(() => import('@/views/Resource'));
 
 
 const App = (): JSX.Element => {
@@ -22,6 +23,7 @@ const App = (): JSX.Element => {
 				<Route path="/" component={Login} exact/>
 				<Route path="/home" component={Home}/>
 				<Route path="/dataCenter" component={DataCenter}/>
+				<Route path="/resource" component={Resource}/>
 				<Route path="/login" component={Login}/>
 				<Route path="/404" component={NotFound}/>
 				<Redirect to="/404"/>
