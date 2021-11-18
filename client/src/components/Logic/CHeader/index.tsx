@@ -2,7 +2,7 @@ import React from 'react';
 import { classnames } from '@@/tailwindcss-classnames';
 import { Icon } from '@iconify/react';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const options = [
 	'Home',
@@ -19,7 +19,7 @@ export const CHeader = (): JSX.Element => {
 		setAnchorEl(event.currentTarget);
 	};
 
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const handleMenuItemClick = (
 		event: React.MouseEvent<HTMLElement>,
@@ -36,7 +36,7 @@ export const CHeader = (): JSX.Element => {
 	const content = classnames('ml-6', 'flex-none', 'cursor-pointer');
 	return (
 		<div className={container}>
-			<span className={content} onClick={() => history.push('/home')}>Easyun</span>
+			<span className={content} onClick={() => navigate('/home')}>Easyun</span>
 			<div className={classnames('ml-40', 'flex-grow')}>
 				<div>
 					<Button
@@ -79,7 +79,7 @@ export const CHeader = (): JSX.Element => {
 				<Icon className={'mx-3'} icon="radix-icons:divider-vertical" color="#5c6f9a" width="30" height="30"
 					  hFlip={true} fr={undefined}/>
 
-				<span id="setting" className={classnames('cursor-pointer','inline-flex')}>
+				<span id="setting" className={classnames('cursor-pointer', 'inline-flex')}>
 					<Icon className={classnames('ml-2', 'inline-block')} icon="ant-design:setting-filled"
 						  color="#5c6f9a" width="30" height="30"
 						  fr={undefined}/>
@@ -88,7 +88,7 @@ export const CHeader = (): JSX.Element => {
 				</span>
 
 				<span id="username" className={'mx-5'} style={{color: '#5c6f9a'}}>admin</span>
-				<span id="user" className={classnames('cursor-pointer','inline-flex')}>
+				<span id="user" className={classnames('cursor-pointer', 'inline-flex')}>
 					<Icon className={classnames('ml-2', 'inline-block')} icon="bi:person-fill" color="#5c6f9a"
 						  width="30" height="30"
 						  fr={undefined}/>

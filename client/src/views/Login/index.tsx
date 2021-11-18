@@ -1,23 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { CButton } from '@/components/Common/CButton';
 import { CInput } from '@/components/Common/CInput';
 import { classnames } from '@@/tailwindcss-classnames';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
 
-interface Props {
-	history: RouteComponentProps['history'];
-	location: RouteComponentProps['location'];
-	match: RouteComponentProps['match'];
-}
 
-const LoginPage = (props: Props): JSX.Element => {
-
+const LoginPage = (): JSX.Element => {
+	const navigate = useNavigate();
 	const login = (username: string, password: string) => {
 		console.log(username, password);
-		props.history.push('/home');
+		navigate('/home');
 	};
 	const {t, i18n} = useTranslation();
 	const lang = i18n.language === 'ja' ? 'en' : 'ja';
@@ -26,25 +21,27 @@ const LoginPage = (props: Props): JSX.Element => {
 
 	return (
 		<div>
-			<div id='header' className={container}>
+			<div id="header" className={container}>
 				<div className={classnames('ml-10', 'flex-grow')}>
 					<div>
 						Easyun
-						<span className={classnames('float-right','mr-40','cursor-pointer')}>
-							<Icon className={classnames('ml-10','inline-block')} icon="ant-design:setting-filled" color="#5c6f9a" width="25" height="25"
+						<span className={classnames('float-right', 'mr-40', 'cursor-pointer')}>
+							<Icon className={classnames('ml-10', 'inline-block')} icon="ant-design:setting-filled"
+								  color="#5c6f9a" width="25" height="25"
 								  hFlip={true} fr={undefined}/>
-							<Icon className={classnames('ml-3','inline-block')} icon="iconoir:nav-arrow-down" color="#5c6f9a" width="25" height="25"
-							  hFlip={true} fr={undefined}/>
+							<Icon className={classnames('ml-3', 'inline-block')} icon="iconoir:nav-arrow-down"
+								  color="#5c6f9a" width="25" height="25"
+								  hFlip={true} fr={undefined}/>
 						</span>
 					</div>
 				</div>
 			</div>
 			<div
-				className={classnames('flex', 'justify-center', 'items-center', 'w-full', 'h-full','mt-36')}>
+				className={classnames('flex', 'justify-center', 'items-center', 'w-full', 'h-full', 'mt-36')}>
 				<div id="login-container"
 					 className={classnames('w-4/12', 'border', 'p-8')}>
 					<div id="login-content">
-						<div id="login-title" className={classnames('m-2','mb-5','font-bold','text-lg')}>
+						<div id="login-title" className={classnames('m-2', 'mb-5', 'font-bold', 'text-lg')}>
 							{t('Login')}
 						</div>
 						<CInput
@@ -57,9 +54,9 @@ const LoginPage = (props: Props): JSX.Element => {
 							label={'Password *'}
 						/>
 
-						<div className={classnames('flex','justify-center')}>
+						<div className={classnames('flex', 'justify-center')}>
 							<CButton
-								classes={classnames('block', 'w-40', 'h-14', 'bg-yellow-650', 'text-white','font-bold', 'my-6')}
+								classes={classnames('block', 'w-40', 'h-14', 'bg-yellow-650', 'text-white', 'font-bold', 'my-6')}
 								click={() => {
 									login('xiaomo', 'xiaomo123');
 								}}
