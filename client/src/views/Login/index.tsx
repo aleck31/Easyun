@@ -4,8 +4,8 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { CButton } from '@/components/Common/CButton';
 import { CInput } from '@/components/Common/CInput';
-import { CHeader } from '@/components/Logic/CHeader';
 import { classnames } from '@@/tailwindcss-classnames';
+import { Icon } from '@iconify/react';
 
 interface Props {
 	history: RouteComponentProps['history'];
@@ -20,16 +20,29 @@ const LoginPage = (props: Props): JSX.Element => {
 		props.history.push('/home');
 	};
 	const {t, i18n} = useTranslation();
-	// const lang = i18n.language === 'ja' ? 'en' : 'ja';
-
+	const lang = i18n.language === 'ja' ? 'en' : 'ja';
+	console.log(lang);
+	const container = classnames('bg-gray-600', 'text-white', 'text-3xl', 'h-16', 'flex', 'items-center');
 
 	return (
 		<div>
-			<CHeader/>
+			<div id='header' className={container}>
+				<div className={classnames('ml-10', 'flex-grow')}>
+					<div>
+						Easyun
+						<span className={classnames('float-right','mr-40','cursor-pointer')}>
+							<Icon className={classnames('ml-10','inline-block')} icon="ant-design:setting-filled" color="#5c6f9a" width="25" height="25"
+								  hFlip={true} fr={undefined}/>
+							<Icon className={classnames('ml-3','inline-block')} icon="iconoir:nav-arrow-down" color="#5c6f9a" width="25" height="25"
+							  hFlip={true} fr={undefined}/>
+						</span>
+					</div>
+				</div>
+			</div>
 			<div
 				className={classnames('flex', 'justify-center', 'items-center', 'w-full', 'h-full','mt-36')}>
 				<div id="login-container"
-					 className={classnames('w-3/12', 'border', 'p-8')}>
+					 className={classnames('w-4/12', 'border', 'p-8')}>
 					<div id="login-content">
 						<div id="login-title" className={classnames('m-2','mb-5','font-bold','text-lg')}>
 							{t('Login')}
