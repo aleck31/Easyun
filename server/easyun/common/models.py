@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import os
 import base64
 from datetime import datetime, timedelta

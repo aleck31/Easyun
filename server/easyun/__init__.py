@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 '''
 @Description: The app module, containing the app factory function.
 @LastEditors: 
