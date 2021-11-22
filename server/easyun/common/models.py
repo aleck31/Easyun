@@ -1,17 +1,16 @@
-from easyun import db
-from werkzeug.security import check_password_hash, generate_password_hash
+import os
 import base64
 from datetime import datetime, timedelta
-import os
-
+from werkzeug.security import check_password_hash, generate_password_hash
+from easyun import db
 
 class Users(db.Model):
     """
     Create a User table
     """
     __tablename__ = 'users'
-    user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(10), nullable=False, unique=True)
+    id = db.Column('user_id', db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
@@ -20,7 +19,7 @@ class Users(db.Model):
     def __repr__(self):
         return '<User: {}>'.format(self.username)
 
-    def __init__(self, username=None, password=None, token=None, token_expiration=None, email=None):
+    def __init__(self, username, password, token, token_expiration, email=None):
         self.username = username
         if password is not None:
             self.password_hash = generate_password_hash(password)

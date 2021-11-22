@@ -10,7 +10,7 @@ import os
 # define api version
 ver = '/api/v1.0'
 
-bp = APIBlueprint('备份管理', __name__, url_prefix = ver) 
+bp = APIBlueprint('数据中心管理', __name__, url_prefix = ver) 
 
 # 新建Datacenter
 @bp.post('/initial')

@@ -55,7 +55,7 @@ def verify_token(token):
         return tokens[token]
 
 
-@bp.post('/auth')
+@bp.post('/auth/')
 @auth_basic.login_required
 @input(UserInSchema)
 def get_token():

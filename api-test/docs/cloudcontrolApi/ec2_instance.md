@@ -1,28 +1,6 @@
 ## EC2 instance
 
-### create-resource 新建instance
-```
-
-```
-### list-resources 列出所有instance
-```
-
-```
-### update-resource 更新指定instance
-```
-
-```
-### get-resource 查看指定instance
-```
-
-```
-### delete-resource 删除指定instance
-```
-
-```
-### track the status of resource operation request
-```
-
+Cloudcontrol API 暂不支持EC2 instance 资源类型，通过SDK调用resource 接口进行管理
 ```
 
 

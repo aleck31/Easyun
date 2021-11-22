@@ -33,11 +33,6 @@
 EC2部分
 ----
 ### 5. Security Group: 
-* easyun-server  
-        IPv4	Custom ICMP - IPv4	Echo Request	N/A	0.0.0.0/0  
-	    IPv4	SSH	TCP	22	0.0.0.0/0  
-	    IPv4	HTTP	TCP	80	0.0.0.0/0  
-	    IPv4	HTTPS	TCP	443  
 * easyun-webapp  
         IPv4	Custom ICMP - IPv4	Echo Request	N/A	0.0.0.0/0  
 	    IPv4	SSH	TCP	22	0.0.0.0/0  
@@ -49,6 +44,11 @@ EC2部分
 	    IPv4	PgSQL	TCP	5432  
         IPv4	MSSQL	TCP	1433  
         IPv4	Oracle	TCP	1521
+* easyun-test  
+        IPv4	Custom ICMP - IPv4	Echo Request	N/A	0.0.0.0/0  
+	    IPv4	SSH	TCP	22	0.0.0.0/0  
+	    IPv4	HTTP	TCP	80	0.0.0.0/0  
+	    IPv4	HTTPS	TCP	443  
 
 ### 6. KeyPair
 * easyun-user-key

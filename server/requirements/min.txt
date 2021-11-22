@@ -1,0 +1,5 @@
+# Mini needed in Development
+
+boto3==1.20.10
+APIFlask==0.10.0
+Flask-SQLAlchemy==2.5.1

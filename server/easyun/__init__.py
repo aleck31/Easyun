@@ -40,7 +40,7 @@ $ flask run
         },
         {
             'name': 'Testing Server',
-            'url': 'http://52.202.56.81:660'
+            'url': 'http://54.156.105.123:660'
         }
         ]
 
@@ -50,15 +50,16 @@ $ flask run
         'url': 'https://boto3.amazonaws.com/v1/documentation/api/latest/guide/index.html'
         }
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:easyun.db'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///easyun.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
     # migrate = Migrate(app, db, compare_type=True)
 
-    # @app.before_first_request
-    # def init_database():
+    @app.before_first_request
+    def init_database():
+        db.create_all()
 
     # 导入各模块blueprint；
     from .common import auth
