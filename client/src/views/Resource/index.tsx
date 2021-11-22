@@ -3,17 +3,17 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import {CHeader} from '@/components/Logic/CHeader';
-import {CFooter} from '@/components/Logic/CFooter';
-import {CButton} from '@/components/Common/CButton';
-import {classnames} from '@@/tailwindcss-classnames';
-import {useHistory} from 'react-router-dom';
-import {Icon} from '@iconify/react';
+import { CHeader } from '@/components/Logic/CHeader';
+import { CFooter } from '@/components/Logic/CFooter';
+import { CButton } from '@/components/Common/CButton';
+import { classnames } from '@@/tailwindcss-classnames';
+import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
 
 interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
+	children?: React.ReactNode;
+	index: number;
+	value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -29,7 +29,7 @@ function TabPanel(props: TabPanelProps) {
 		>
 			{value === index && (
 				<Box sx={{p: 3}}>
-					<Typography>{children}</Typography>
+					<Typography component={'span'}>{children}</Typography>
 				</Box>
 			)}
 		</div>
@@ -46,7 +46,7 @@ function a11yProps(index: number) {
 export const Resource = (): JSX.Element => {
 	const [value, setValue] = React.useState(0);
 
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
@@ -61,42 +61,45 @@ export const Resource = (): JSX.Element => {
 						<Tab label="Server" {...a11yProps(0)} />
 						<Tab label="Storage" {...a11yProps(1)} />
 						<Tab label="Database" {...a11yProps(2)} />
-						<Tab label="Networking" {...a11yProps(2)} />
-						<Tab label="Containers" {...a11yProps(2)} />
-						<Tab label="Backups" {...a11yProps(2)} />
+						<Tab label="Networking" {...a11yProps(3)} />
+						<Tab label="Containers" {...a11yProps(4)} />
+						<Tab label="Backups" {...a11yProps(5)} />
 					</Tabs>
 				</Box>
 				<TabPanel value={value} index={0}>
-					<div className={classnames('flex', 'flex-col', 'justify-center','items-center','m-10')}>
+					<div className={classnames('flex', 'flex-col', 'justify-center', 'items-center', 'm-10')}>
 						<div className={classnames('text-3xl')}> You have no servers right now.</div>
-						<div className={classnames('text-gray-700','my-2')}> Add a cloud server and get start with Easyun!</div>
+						<div className={classnames('text-gray-700', 'my-2')}> Add a cloud server and get start with
+							Easyun!
+						</div>
 						<CButton click={() => {
-							history.push('/resource');
-						}} classes={classnames('bg-yellow-550', 'text-white', 'rounded-3xl', 'h-10', 'w-32', 'px-5','my-5')}>Add
-                            Server</CButton>
+							navigate('/resource/addServer');
+						}}
+								 classes={classnames('bg-yellow-550', 'text-white', 'rounded-3xl', 'h-10', 'w-32', 'px-5', 'my-5')}>Add
+							Server</CButton>
 						<div className={classnames('text-blue-500')}>
-							<a href="https://aws.amazon.com/cn/ec2" target='_blank' rel="noreferrer">
-                                Learn more about instance
+							<a href="https://aws.amazon.com/cn/ec2" target="_blank" rel="noreferrer">
+								Learn more about instance
 								<Icon className={classnames('inline-block', 'mx-1', 'text-blue-500')}
-									icon="akar-icons:link-out" width="20" height="20" fr={undefined}/>
+									  icon="akar-icons:link-out" width="20" height="20" fr={undefined}/>
 							</a>
 						</div>
 					</div>
 				</TabPanel>
 				<TabPanel value={value} index={1}>
-                    Storage
+					Storage
 				</TabPanel>
 				<TabPanel value={value} index={2}>
-                    Databases
+					Databases
 				</TabPanel>
 				<TabPanel value={value} index={3}>
-                    Networking
+					Networking
 				</TabPanel>
 				<TabPanel value={value} index={4}>
-                    Containers
+					Containers
 				</TabPanel>
 				<TabPanel value={value} index={5}>
-                    Backups
+					Backups
 				</TabPanel>
 			</Box>
 			<CFooter/>

@@ -6,10 +6,10 @@ import {classnames} from '@@/tailwindcss-classnames';
 import CSecurityGroup from '@/components/Logic/CSecurityGrop';
 import {CButton} from '@/components/Common/CButton';
 import {Icon} from '@iconify/react';
-import {useHistory} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const DataCenter = (): JSX.Element => {
-	const history = useHistory();
+	const navigate = useNavigate();
 	return (
 		<div>
 			<CHeader/>
@@ -34,13 +34,13 @@ const DataCenter = (): JSX.Element => {
 
 			<div className={classnames('flex', 'justify-center', 'm-16')}>
 				<CButton click={() => {
-					history.push('/home');
+					navigate('/home');
 				}} classes={classnames('bg-gray-400', 'text-white', 'rounded-2xl', 'w-32', 'h-9', 'mx-5')}>
 					<Icon className={classnames('inline-block', 'mr-2')} icon="akar-icons:arrow-left" color="white"
 						width="20" height="20" fr={undefined}/>
                     Back</CButton>
 				<CButton click={() => {
-					history.push('/resource');
+					navigate('/resource');
 				}} classes={classnames('bg-yellow-550', 'text-white', 'rounded-2xl', 'w-32', 'px-5')}>Create</CButton>
 			</div>
 

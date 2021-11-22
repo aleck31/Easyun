@@ -12,7 +12,7 @@
     "preview": "http-server .vuepress/dist/"
   },
   "keywords": [],
-  "author": "Hu Peng",
+  "author": "Hu Peng<suzukaze.hazuki2020@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "http-server": "^14.0.0",
