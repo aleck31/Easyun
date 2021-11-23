@@ -18,27 +18,28 @@
 
 ```
 └─server
-    ├─.venv                 本地虚拟环境
+    ├─.venv                     本地虚拟环境
     ├─easyun                
-    │  ├─common             通用组件
-    │  │  ├─auth.py         认证模块
-    │  │  ├─models.py       模型定义
-    │  │  └─errors.p        错误消息定义
-    │  ├─modules            功能组件
-    │  │  ├─account         账户管理BP
-    │  │  ├─dashboard       监控面板BP
-    │  │  ├─datacenter      数据中心管理BP
-    │  │  ├─mbackup         备份管理BP
-    │  │  ├─mnetwork        网络管理BP
-    │  │  ├─mserver         服务器管理BP
-    │  │  └─mstorage        存储管理BP
+    │  ├─common                 通用组件
+    │  │  ├─auth.py             认证模块
+    │  │  ├─models.py           模型定义
+    │  │  └─errors.p            错误消息定义
+    │  ├─modules                功能组件
+    │  │  ├─account             账户管理BP
+    │  │  ├─dashboard           监控面板BP
+    │  │  ├─datacenter          数据中心管理BP
+    │  │  ├─mbackup             备份管理BP
+    │  │  ├─mnetwork            网络管理BP
+    │  │  ├─mserver             服务器管理BP
+    │  │  └─mstorage            存储管理BP
     │  ├─templates          
     │  │    └─no_need
-    │  └─easyun.db          数据库文件         
-    ├─keys                  KeyPair缓存   
-    ├─logs                  运行日志
-    ├─requirements          环境依赖
+    │  └─easyun.db              数据库文件         
+    ├─keys                      KeyPair缓存   
+    ├─logs                      运行日志
+    ├─requirements              环境依赖
     ├─tests
-    ├─demo.py               APIFlask演示项目
-    └─run.py                启动脚本
+    ├─demo.py                   APIFlask演示项目
+    ├─config.py                 配置文件
+    └─run.py                    启动脚本
 ```
