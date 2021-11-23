@@ -3,12 +3,10 @@
 @Description: The user auth module.
 @LastEditors: 
 '''
-import functools
-from flask import jsonify, g, redirect, request, session, url_for
+from flask import jsonify
 from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, Schema, input, output
 from apiflask.validators import Length, OneOf
 from apiflask.fields import String, Integer
-from werkzeug.security import check_password_hash, generate_password_hash
 from .. import db
 from .models import User
 from .errors import error_response, bad_request
@@ -78,9 +76,19 @@ def add_user(newuser):
 
 @bp.get('/token')
 @auth_basic.login_required
-@input(UserInSchema)
 def get_auth_token():
-    token = auth_basic.current_user().get_token()
+    '''基于auth_basic, Get方法获取token'''
+    token = auth_basic.current_user.get_token()
+    db.session.commit()
+    return jsonify({'token': token})
+
+
+@bp.post('/token')
+@input(UserInSchema)
+def post_auth_token():
+    '''基于auth_token，Post方法获取token'''
+    # 此处待增加用户验证部分，请通过get拿token
+    token = auth_token.current_user().get_token()
     db.session.commit()
     return jsonify({'token': token})
 

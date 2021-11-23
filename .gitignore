@@ -130,7 +130,9 @@ dmypy.json
 
 # client
 node_modules
-.env
+base.db
+easyun.db
+
 
 # yarn
 .yarn/*

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """The Server management module."""
+from os import abort
 import boto3
-from apiflask import APIBlueprint, Schema, input, output, abort
+from apiflask import APIBlueprint, Schema, input, output, auth_required
 from apiflask.fields import Integer, String
 from apiflask.validators import Length, OneOf
 from flask import jsonify
@@ -54,7 +55,7 @@ TAG_SPEC = [
 
 class ServerIn(Schema):
     name = String(required=True, validate=Length(0, 20))     #云服务器名称
-    num = Integer(requir1=True)                              #新建云服务器数量
+    num = Integer(required=True)                    #新建云服务器数量
     ami_id = String(required=True, validate=Length(0, 20))         #ImageId
     type = String(required=True, validate=OneOf(['t3', 'g4', 'm5']))    #INSTANCE_TYPE
     subnet = String(required=True) 
@@ -77,7 +78,7 @@ class ServerOut(Schema):
 
 # 新增server
 @bp.post('/server')
-@auth_token.login_required
+@auth_required(auth_token)
 @input(ServerIn)
 @output(ServerOut, 201, description='add A new server')
 def add_server(newsvr):
@@ -98,9 +99,10 @@ def add_server(newsvr):
 
 
 @bp.get('/servers')
+@auth_required(auth_token)
 @output(ServerOut, description='Get Servers list')
 def list_svrs():
-    '''获取Easyun环境下云服务器列表(测试未加授权)'''
+    '''获取Easyun环境下云服务器列表'''
     RESOURCE = boto3.resource('ec2', region_name=REGION)
     servers = RESOURCE.instances.filter(
     Filters=[
@@ -113,7 +115,7 @@ def list_svrs():
 
 
 @bp.get('/server/<svr_id>')
-@auth_token.login_required
+@auth_required(auth_token)
 @output(ServerOut, description='Server info')
 def get_svr(svr_id):
     '''查看指定云服务器详情'''
@@ -132,13 +134,13 @@ def get_svr(svr_id):
 
 class OperateIn(Schema):
     svr_ids = list()     #云服务器ID
-    action = String(required=True, validate=OneOf(['start', 'stop', 'restart','delete']))    #Operation TYPE
+    action = String(required=True, validate=OneOf(['start', 'stop', 'restart']))    #Operation TYPE
 
 class OperateOut(Schema):
     svr_ids = list() 
 
 @bp.post('/server/<action>/<svr_ids>')
-@auth_token.login_required
+@auth_required(auth_token)
 @input(OperateIn)
 @output(OperateOut, description='Operation finished !')
 def operate_svr(action, svr_ids):
@@ -155,12 +157,11 @@ def operate_svr(action, svr_ids):
         servers.restart()  
         return 'restarting'
     else:
-        return 
+        abort()
 
 
 @bp.delete('/server/<svr_ids>')
-@auth_token.login_required
-@input(OperateIn)
+@auth_required(auth_token)
 @output({}, 204)
 def del_svr(svr_ids):
     '''删除指定云服务器'''

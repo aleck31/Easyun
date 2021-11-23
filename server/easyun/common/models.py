@@ -3,10 +3,9 @@ import os
 import base64
 from datetime import datetime, timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
 from easyun import db
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     """
     Create a User table
     """
@@ -52,11 +51,11 @@ class User(UserMixin, db.Model):
             self.set_password(data['password'])
 
     def get_token(self, expires_in=7200):  #设置 2 小时过期
-        now = datetime.utcnow()
-        if self.token and self.token_expiration > now + timedelta(seconds=60):
+        utcnow = datetime.utcnow()
+        if self.token and self.token_expiration > utcnow + timedelta(seconds=60):
             return self.token
         self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
-        self.token_expiration = now + timedelta(seconds=expires_in)
+        self.token_expiration = utcnow + timedelta(seconds=expires_in)
         db.session.add(self)
         return self.token
 
@@ -68,4 +67,23 @@ class User(UserMixin, db.Model):
         user = User.query.filter_by(token=token).first()
         if user is None or user.token_expiration < datetime.utcnow():
             return None
-        return user        
+        return user
+
+
+class Account(db.Model):
+    """
+    Create a Account table
+    """
+    __tablename__ = 'account'
+    id = db.Column(db.Integer, primary_key=True)    
+    aws_id = db.Column(db.String(20), nullable=False, unique=True)  # AWS Account ID
+    role = db.Column(db.String(120))           # AWS IAM rale name
+    region = db.Column(db.String(120))      # host region
+    actdate = db.Column(db.Date)            # Activation date
+    remind = db.Column(db.Boolean(0)) 
+
+    def countdown(self):
+        now = datetime.now()
+        nowday = datetime.date(now)
+        days =  nowday - self.actdate
+        return days
