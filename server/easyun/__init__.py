@@ -36,7 +36,7 @@ def create_app(run_env):
 
     app.logger.setLevel(logging.INFO)
     if run_env != 'test':
-        app.logger.info('Easyun API startup')
+        app.logger.info('Easyun API Start')
 
     return app
 
@@ -45,10 +45,10 @@ def create_app(run_env):
 def register_blueprints(app):
     """Register Flask blueprints."""
     from .common import auth
-    from .modules import mserver
+    # from .modules import mserver
 
     app.register_blueprint(auth.bp)
-    app.register_blueprint(mserver.bp)
+    # app.register_blueprint(mserver.bp)
     return None
 
 def configure_logger(app):

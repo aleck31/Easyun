@@ -4,7 +4,7 @@
 @LastEditors: 
 '''
 from flask import jsonify
-from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, Schema, input, output
+from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, auth_required, Schema, input, output
 from apiflask.validators import Length, OneOf
 from apiflask.fields import String, Integer
 from .. import db
@@ -14,7 +14,7 @@ from .errors import error_response, bad_request
 # define api version
 ver = '/api/v1.0'
 
-bp = APIBlueprint('用户认证', __name__, url_prefix = ver) 
+bp = APIBlueprint('用户认证', __name__, url_prefix = ver+'/user') 
 
 auth_basic = HTTPBasicAuth()
 auth_token = HTTPTokenAuth(scheme='Bearer')
@@ -30,7 +30,6 @@ def verify_password(username, password):
 def basic_auth_error(status):
     return error_response(status)
 
-
 @auth_token.verify_token
 def verify_token(token):
     return User.check_token(token) if token else None
@@ -42,11 +41,6 @@ def token_auth_error(status):
     return error_response(status)
 
 
-class NewInSchema(Schema):
-    username = String(required=True, validate=Length(0, 10))
-    password = String(required=True, validate=Length(0, 20))
-    email = String(required=True, validate=Length(0, 20))
-
 class UserInSchema(Schema):
     username = String(required=True, validate=Length(0, 10))
     password = String(required=True, validate=Length(0, 20))
@@ -56,11 +50,17 @@ class UserOutSchema(Schema):
     username = String()
     email = String()
 
+class NewUser(Schema):
+    username = String(required=True, validate=Length(0, 10))
+    password = String(required=True, validate=Length(0, 20))
+    email = String(required=True, validate=Length(0, 20))
+
 
 @bp.post('/adduser')
-@input(NewInSchema)
-@output(UserOutSchema, 201, description='add A new user')
+@input(NewUser)
+@output({}, 201, description='Add a new user.')
 def add_user(newuser):
+    '''向数据库添加新用户【仅限测试用】'''
     if 'username' not in newuser or 'password' not in newuser:
         return bad_request('must include username and password fields')
     if User.query.filter_by(username=newuser['username']).first():
@@ -74,31 +74,55 @@ def add_user(newuser):
     return user.username
 
 
+class NewPassword(Schema):
+    password = String(required=True, validate=Length(0, 20))
+
+@bp.put('/change_password')
+@auth_required(auth_token)
+@input(NewPassword)
+@output({}, 204, description='Password changed.')
+def change_passowrd(newpwd):
+    '''修改当前用户密码'''
+    auth_token.current_user.set_password(newpwd['password'])
+    db.session.commit()
+    return ''
+
+
+@bp.post('/auth')
+@input(UserInSchema)
+def post_auth_token(user):
+    '''用户登录 (auth_token，Post方法获取token)'''
+    if 'username' not in user or 'password' not in user:
+        return bad_request('must include username and password fields')
+    inname = user["username"]
+    inpwd = user['password']
+    login_user = User.query.filter_by(username=inname).first()
+    if login_user and login_user.verify_password(inpwd):
+        # token = auth_token.current_user.get_token()
+        token = login_user.get_token()
+        db.session.commit()
+        return jsonify({'token': token})
+    else:
+        return error_response(401)
+
+
 @bp.get('/token')
-@auth_basic.login_required
+@auth_required(auth_basic)
 def get_auth_token():
-    '''基于auth_basic, Get方法获取token'''
+    '''基于auth_basic, Get方法获取token【仅限测试用】'''
     token = auth_basic.current_user.get_token()
     db.session.commit()
     return jsonify({'token': token})
 
 
-@bp.post('/token')
-@input(UserInSchema)
-def post_auth_token():
-    '''基于auth_token，Post方法获取token'''
-    # 此处待增加用户验证部分，请通过get拿token
-    token = auth_token.current_user().get_token()
-    db.session.commit()
-    return jsonify({'token': token})
-
-
-@bp.delete('/logout/<username>')
-@auth_token.login_required
+@bp.delete('/logout')
+@auth_required(auth_token)
+@output({}, 204, description='Current user logout')
 def revoke_auth_token():
+    '''注销当前用户 (撤销token)'''
     # Headers
     # Token Bearer Authorization
     #     token    
-    auth_token.current_user().revoke_token()
+    auth_token.current_user.revoke_token()
     db.session.commit()
-    return '', 204
+    return ''

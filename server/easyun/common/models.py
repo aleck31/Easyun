@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from easyun import db
 
+
 class User(db.Model):
     """
     Create a User table
@@ -78,12 +79,15 @@ class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)    
     aws_id = db.Column(db.String(20), nullable=False, unique=True)  # AWS Account ID
     role = db.Column(db.String(120))           # AWS IAM rale name
-    region = db.Column(db.String(120))      # host region
-    actdate = db.Column(db.Date)            # Activation date
-    remind = db.Column(db.Boolean(0)) 
+    region = db.Column(db.String(120))      # Current Main Region
+    atvdate = db.Column(db.Date)            # Activation date
+    remind = db.Column(db.Boolean) 
 
-    def countdown(self):
+    def get_region(self):
+        return (self.region)
+
+    def get_days(self):
         now = datetime.now()
         nowday = datetime.date(now)
-        days =  nowday - self.actdate
+        days =  nowday - self.atvdate
         return days
