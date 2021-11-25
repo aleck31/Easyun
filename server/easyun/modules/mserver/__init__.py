@@ -1,59 +1,63 @@
 # -*- coding: utf-8 -*-
 """The Server management module."""
-from os import abort
 import boto3
 from apiflask import APIBlueprint, Schema, input, output, auth_required
-from apiflask.fields import Integer, String
+from apiflask.fields import Integer, String, List, Dict
+from os import abort
 from apiflask.validators import Length, OneOf
 from flask import jsonify
-from easyun.common.auth import auth_token
 from datetime import date, datetime
+from easyun.common.auth import auth_token
+from easyun.common.models import Account
 
 # define api version
 ver = '/api/v1.0'
 
-bp = APIBlueprint('服务器管理', __name__, url_prefix = ver) 
+bp = APIBlueprint('服务器管理', __name__, url_prefix = ver+'/server') 
 
-REGION = "us-east-1"
+# REGION = "us-east-1"
+REGION = Account().region
 FLAG = "Easyun"
 
 # 云服务器参数定义
-NAME = 'boto3test'
-NUM = 1
-AMI = 'ami-0447addf6c74624eb'
-TYPE = 't4g.nano'
-SUBNET = 'subnet-06bfe659f6ecc2eed'
-SGs = ['sg-05df5c8e8396d06e9',]
-KEY = "key_easyun_dev"
-DISK = [
-    {
-        'DeviceName': '/dev/xvda',
-        'Ebs': {            
-            'DeleteOnTermination': True,
-            'VolumeSize': 16,
-            'VolumeType': 'gp2'
-            }
-    },
-    {
-        'DeviceName': '/dev/sdf',
-        'Ebs': {            
-            'DeleteOnTermination': True,
-            'VolumeSize': 13,
-            'VolumeType': 'gp2'
-            } 
-    }
-]
-TAG_SPEC = [
-    {
-    "ResourceType":"instance",
-    "Tags": [
-            {"Key": "Flag", "Value": FLAG},
-            {"Key": "Name", "Value": NAME}
+NewSvr = {
+    'name' : 'boto3test',
+    'numb' : 1,
+    'image' : 'ami-0447addf6c74624eb',
+    'type' : 't4g.nano',
+    'subnet' : 'subnet-06bfe659f6ecc2eed',
+    'sgs' : ['sg-05df5c8e8396d06e9',],
+    'key' : "key_easyun_dev",
+    'disk' : [
+        {
+            'DeviceName': '/dev/xvda',
+            'Ebs': {            
+                'DeleteOnTermination': True,
+                'VolumeSize': 16,
+                'VolumeType': 'gp2'
+                }
+        },
+        {
+            'DeviceName': '/dev/sdf',
+            'Ebs': {            
+                'DeleteOnTermination': True,
+                'VolumeSize': 13,
+                'VolumeType': 'gp2'
+                } 
+        }
+    ],
+    'tag_spec' : [
+        {
+        "ResourceType":"instance",
+        "Tags": [
+                {"Key": "Flag", "Value": FLAG},
+                {"Key": "Name", "Value": 'test-from-api'}
+            ]
+        }
         ]
-    }
-    ]
+}
 
-class ServerIn(Schema):
+class AddSvr(Schema):
     name = String(required=True, validate=Length(0, 20))     #云服务器名称
     num = Integer(required=True)                    #新建云服务器数量
     ami_id = String(required=True, validate=Length(0, 20))         #ImageId
@@ -61,13 +65,30 @@ class ServerIn(Schema):
     subnet = String(required=True) 
     sgs = String(required=True ) 
     keypair = String(required=True)
-    disk = dict(
+    disk = Dict(
         required=True,
         metadata={'title': 'Volumes', 'description': 'The volume of the server.'}
     )
 
 
-class ServerOut(Schema):
+# 新增server
+@bp.post('/add')
+@auth_required(auth_token)
+@input(AddSvr)
+@output({}, 204, description='add A new server')
+def add_server(newsvr):
+    '''新建云服务器'''
+    RESOURCE = boto3.resource('ec2', region_name=REGION)
+    newsvr = RESOURCE.create_instance(NewSvr)
+    return 'newsvr[0].id'
+
+
+
+class SvrListIn(Schema):
+    ami_id = Integer()
+
+
+class SvrListOut(Schema):
     ami_id = Integer()
     instance_type = String()
     subnet_id = String()
@@ -76,31 +97,9 @@ class ServerOut(Schema):
     category = String()
 
 
-# 新增server
-@bp.post('/server')
-@auth_required(auth_token)
-@input(ServerIn)
-@output(ServerOut, 201, description='add A new server')
-def add_server(newsvr):
-    '''新建云服务器'''
-    RESOURCE = boto3.resource('ec2', region_name=REGION)
-    newsvr = RESOURCE.create_instance(
-        ImageId = AMI,
-        InstanceType = TYPE,
-        MaxCount = NUM,
-        MinCount = NUM,
-        BlockDeviceMappings = DISK,
-        SubnetId = SUBNET,
-        SecurityGroupIds = SGs,
-        KeyName = KEY,
-        TagSpecifications = TAG_SPEC
-    )
-    return newsvr[0].id
-
-
 @bp.get('/servers')
 @auth_required(auth_token)
-@output(ServerOut, description='Get Servers list')
+@output(SvrListOut, description='Get Servers list')
 def list_svrs():
     '''获取Easyun环境下云服务器列表'''
     RESOURCE = boto3.resource('ec2', region_name=REGION)
@@ -133,11 +132,17 @@ def get_svr(svr_id):
 
 
 class OperateIn(Schema):
-    svr_ids = list()     #云服务器ID
-    action = String(required=True, validate=OneOf(['start', 'stop', 'restart']))    #Operation TYPE
+    svr_ids = List(         #云服务器ID
+        required=True
+    )     
+    action = String(
+        required=True, 
+        validate=OneOf(['start', 'stop', 'restart'])  #Operation TYPE
+        )   
+
 
 class OperateOut(Schema):
-    svr_ids = list() 
+    svr_ids = List() 
 
 @bp.post('/server/<action>/<svr_ids>')
 @auth_required(auth_token)
