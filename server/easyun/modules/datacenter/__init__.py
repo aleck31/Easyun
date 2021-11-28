@@ -27,6 +27,8 @@ def add_datacenter(newdc):
     # create 1 x easyun-route-nat
     # create 3 x easyun-sg-xxx
     # create 1 x key-easyun-user (默认keypair)
+
+    # test added by peng
     return '' #status: successful
 
 
