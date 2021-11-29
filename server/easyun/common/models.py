@@ -91,3 +91,42 @@ class Account(db.Model):
         nowday = datetime.date(now)
         days =  nowday - self.atvdate
         return days
+
+
+class Result :
+ 
+    #构造函数
+    def __init__(self, code, msg, data):
+        self.__code = code
+        self.__msg = msg
+        self.__data = data
+ 
+    #getter
+    @property
+    def code(self):
+        return self.__code
+ 
+    #settter
+    @code.setter
+    def code(self, code):
+        self.__code = code
+ 
+    #getter
+    @property
+    def msg(self):
+        return self.__msg
+
+    #setter
+    @msg.setter
+    def msg(self, msg):
+        self.__msg = msg
+ 
+    #getter
+    @property
+    def data(self):
+        return self.__data
+ 
+    #settter
+    @data.setter
+    def code(self, data):
+        self.__data = data

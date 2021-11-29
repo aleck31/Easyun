@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""The Server management module."""
+'''
+@Description: The Server Management module
+@LastEditors: 
+'''
+import re
+from typing_extensions import Required
 import boto3
 from apiflask import APIBlueprint, Schema, input, output, auth_required
 from apiflask.fields import Integer, String, List, Dict
@@ -8,7 +13,7 @@ from apiflask.validators import Length, OneOf
 from flask import jsonify
 from datetime import date, datetime
 from easyun.common.auth import auth_token
-from easyun.common.models import Account
+from easyun.common.models import Account, Result
 
 # define api version
 ver = '/api/v1.0'
@@ -69,6 +74,9 @@ class AddSvr(Schema):
         required=True,
         metadata={'title': 'Volumes', 'description': 'The volume of the server.'}
     )
+    tag_spec = List(
+        Required=True        
+    )
 
 
 # 新增server
@@ -89,15 +97,19 @@ class SvrListIn(Schema):
 
 
 class SvrListOut(Schema):
-    ami_id = Integer()
-    instance_type = String()
+    ins_id = String()
+    tag_name = Dict()
+    ins_status = String()
+    ins_type = String()
+    vcpu = Integer()
+    ram = String()
     subnet_id = String()
     ssubnet_id = String()
     key_name = String()
     category = String()
 
 
-@bp.get('/servers')
+@bp.get('/list')
 @auth_required(auth_token)
 @output(SvrListOut, description='Get Servers list')
 def list_svrs():
