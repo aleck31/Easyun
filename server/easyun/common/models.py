@@ -76,10 +76,11 @@ class Account(db.Model):
     Create a Account table
     """
     __tablename__ = 'account'
-    id = db.Column(db.Integer, primary_key=True)    
-    aws_id = db.Column(db.String(20), nullable=False, unique=True)  # AWS Account ID
-    role = db.Column(db.String(120))           # AWS IAM rale name
-    region = db.Column(db.String(120))      # Current Main Region
+    id = db.Column(db.Integer, primary_key=True) 
+    cloud = db.Column(db.Integer, primary_key=True)     # AWS
+    account_id = db.Column(db.String(20), nullable=False, unique=True)  # Account ID
+    role = db.Column(db.String(120))           # IAM rale name
+    region = db.Column(db.String(120))      # Deployed Region
     atvdate = db.Column(db.Date)            # Activation date
     remind = db.Column(db.Boolean) 
 

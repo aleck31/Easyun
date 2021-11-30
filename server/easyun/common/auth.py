@@ -4,7 +4,7 @@
 @LastEditors: 
 '''
 from flask import jsonify
-from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, auth_required, Schema, input, output
+from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, auth_required, Schema, input, output, doc
 from apiflask.validators import Length, OneOf
 from apiflask.fields import String, Integer
 from .. import db
@@ -59,8 +59,9 @@ class NewUser(Schema):
 @bp.post('/adduser')
 @input(NewUser)
 @output({}, 201, description='Add a new user.')
+@doc(tag='【仅限测试用】', operation_id='Add New User')
 def add_user(newuser):
-    '''向数据库添加新用户【仅限测试用】'''
+    '''向数据库添加新用户'''
     if 'username' not in newuser or 'password' not in newuser:
         return bad_request('must include username and password fields')
     if User.query.filter_by(username=newuser['username']).first():
@@ -108,8 +109,9 @@ def post_auth_token(user):
 
 @bp.get('/token')
 @auth_required(auth_basic)
+@doc(tag='【仅限测试用】', operation_id='Get token')
 def get_auth_token():
-    '''基于auth_basic, Get方法获取token【仅限测试用】'''
+    '''基于auth_basic, Get方法获取token'''
     token = auth_basic.current_user.get_token()
     db.session.commit()
     return jsonify({'token': token})
