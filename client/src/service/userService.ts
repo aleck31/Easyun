@@ -1,8 +1,10 @@
-import axios, { Response } from 'redaxios';
+import axios, {Response} from 'redaxios';
 
 export default class userService {
-	static async fetchById<T>(userId: number): Promise<Response<T>> {
-		console.log(userId);
-		return axios.get('https://reqres.in/api/users');
+	// xiaomo/xiaomo2019
+	static async login<T>(username: string, password: string): Promise<Response<T>> {
+		return axios.post('api/v1.0/user/token', {
+			username, password
+		});
 	}
 }
