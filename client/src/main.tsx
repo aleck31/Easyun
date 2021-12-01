@@ -14,6 +14,7 @@ import DataCenter from '@/views/DataCenter';
 import Resource from '@/views/Resource';
 import AddServer from '@/views/Resource/AddServer';
 import LoginPage from '@/views/Login';
+import Account from '@/views/Account';
 
 
 const App = (): JSX.Element => {
@@ -29,9 +30,10 @@ const App = (): JSX.Element => {
 				</Route>
 				<Route path="login" element={<LoginPage/>}/>
 				<Route path="404" element={<NotFound/>}/>
-				<Route
+				{/* <Route
 					path="*"
-					element={<Navigate to="/"/>}/>
+					element={<Navigate to="/"/>}/> */}
+				<Route path='account' element={<Account/>}/>
 			</Routes>
 		</Suspense>
 	);
