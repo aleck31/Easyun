@@ -2,28 +2,27 @@ import {useTranslation} from 'react-i18next';
 
 import React, {createRef} from 'react';
 import {CButton} from '@/components/Common/CButton';
-import {CInput} from '@/components/Common/CInput';
 import {classnames} from '@@/tailwindcss-classnames';
 import {Icon} from '@iconify/react';
 import {useNavigate} from 'react-router-dom';
+
 import userService from '@/service/userService';
 
+interface LoginRes {
+    token: string,
+}
 
 const LoginPage = (): JSX.Element => {
 	const navigate = useNavigate();
 	const usernameRef = createRef<HTMLInputElement>();
 	const passwordRef = createRef<HTMLInputElement>();
-    
 	const login = async (username?: string, password?: string) => {
 		if (!username || !password) {
 			return;
 		}
 		console.log(username, password);
-		const res = await userService.login(username, password);
-		console.log(res.data);
-		// if (res.data) {
-		// 	localStorage.setItem('token',res.data());
-		// }
+		const res = await userService.login<LoginRes>(username, password);
+		console.log(res.token);
 		navigate('/home');
 	};
 
@@ -32,7 +31,7 @@ const LoginPage = (): JSX.Element => {
 	const lang = i18n.language === 'ja' ? 'en' : 'ja';
 	console.log(lang);
 	const container = classnames('bg-gray-600', 'text-white', 'text-3xl', 'h-16', 'flex', 'items-center');
-
+	const classes = classnames('w-9/12', 'h-12', 'border', 'border-gray-400', 'rounded', 'mx-2', 'my-10', 'p-5');
 	return (
 		<div>
 			<div id="header" className={container}>
@@ -58,17 +57,17 @@ const LoginPage = (): JSX.Element => {
 						<div id="login-title" className={classnames('m-2', 'mb-5', 'font-bold', 'text-lg')}>
 							{t('Login')}
 						</div>
-						<CInput
+
+						<input type='text'
 							ref={usernameRef}
-							placeholder={'Enter your username'}
-							label={'Username *'}
-						/>
-						<CInput
+							placeholder='Enter your username'
+							className={classnames(classes)}/>
+
+						<input type='password'
 							ref={passwordRef}
-							placeholder={'Enter your password'}
-							type={'password'}
-							label={'Password *'}
-						/>
+							placeholder='Enter your password'
+							className={classnames(classes)}/>
+
 
 						<div className={classnames('flex', 'justify-center')}>
 							<CButton
