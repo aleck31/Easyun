@@ -12,7 +12,7 @@ from .models import User
 from .errors import error_response, bad_request
 
 # define api version
-ver = '/api/v1.0'
+ver = '/api/v1'
 
 bp = APIBlueprint('用户认证', __name__, url_prefix = ver+'/user') 
 

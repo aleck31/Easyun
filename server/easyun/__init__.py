@@ -9,6 +9,7 @@ from apiflask import APIFlask
 from logging.handlers import RotatingFileHandler
 from flask_sqlalchemy import SQLAlchemy
 from config import env_config
+from flask_cors import CORS
 from flask_migrate import Migrate
 
 
@@ -21,6 +22,7 @@ db = SQLAlchemy()
 def create_app(run_env):
     app = APIFlask(__name__, docs_path='/api/docs', redoc_path='/api/redoc') 
     app.config.from_object(env_config[run_env])
+    CORS(app)
 
     db.init_app(app)
 

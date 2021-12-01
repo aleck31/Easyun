@@ -71,27 +71,42 @@ class User(db.Model):
         return user
 
 
+
 class Account(db.Model):
     """
     Create a Account table
     """
     __tablename__ = 'account'
     id = db.Column(db.Integer, primary_key=True) 
-    cloud = db.Column(db.Integer, primary_key=True)     # AWS
+    cloud = db.Column(db.String(10), primary_key=True)     # AWS
     account_id = db.Column(db.String(20), nullable=False, unique=True)  # Account ID
-    role = db.Column(db.String(120))           # IAM rale name
-    region = db.Column(db.String(120))      # Deployed Region
-    atvdate = db.Column(db.Date)            # Activation date
+    atvdate = db.Column(db.Date)            # Account Activation date
     remind = db.Column(db.Boolean) 
-
-    def get_region(self):
-        return (self.region)
 
     def get_days(self):
         now = datetime.now()
         nowday = datetime.date(now)
         days =  nowday - self.atvdate
         return days
+
+
+class Datacenter(db.Model):
+    """
+    Create a Account table
+    """
+    __tablename__ = 'datacenter'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, unique=True)    # Datacenter Name: Easyun
+    cloud = db.Column(db.String(20), nullable=False)                # Cloud Provider: AWS
+    account_id = db.Column(db.String(30), nullable=False)           # Account ID
+    region = db.Column(db.String(120))          # Deployed Region
+    vpc_id = db.Column(db.String(30))           # VPC ID 
+    credate = db.Column(db.Date)                # Datacenter Create date
+
+    def get_region(self):
+        return (self.region)
+
+
 
 
 class Result :
