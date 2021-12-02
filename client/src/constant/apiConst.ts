@@ -1,7 +1,7 @@
 // App 跟应用相关的不好分类的都放这里
 
 // User 用户登陆、改密、个人中心等，常量名以User开头
-export const UserLogin = 'api/v1.0/user/token';
+export const UserLogin = 'api/v1/user/auth';
 
 // dataCenter 数据中心相关内容 常量名以DataCenter开头
 
