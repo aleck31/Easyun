@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
+    "daisyui": "^1.16.2",
     "i18next": "^20.6.1",
     "i18next-browser-languagedetector": "^6.1.2",
     "qs": "^6.10.1",
