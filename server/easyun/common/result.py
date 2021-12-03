@@ -6,17 +6,17 @@
 from apiflask import Schema, abort
 from apiflask.fields import String, Integer, Field, Nested
 from flask import jsonify
-from werkzeug.http import HTTP_STATUS_CODES
-from typing import Union, Tuple
+from werkzeug.http import HTTP_STATUS_CODES, http_date
+from typing import Any, Union, Tuple
 
 
-def generate_payload(data: any = None,
+def generate_payload(data: Any = None,
                      message: str = "success",
                      status_code: int = 200) -> dict:
     """生成格式化的响应体
 
     Args:
-        data (any, optional): 响应的数据. Defaults to None.
+        data (Any, optional): 响应的数据. Defaults to None.
         message (str, optional): 响应的消息. Defaults to "success".
         status_code (int, optional): 业务状态码. Defaults to 200.
 
@@ -26,7 +26,7 @@ def generate_payload(data: any = None,
     return {'message': message, 'status_code': status_code, 'data': data}
 
 
-def make_resp(data: any = None,
+def make_resp(data: Any = None,
               message: str = "success", status_code: int = 200,
               http_status_code: int = 200) -> Tuple[dict, int]:
     """make a views function response
@@ -35,7 +35,7 @@ def make_resp(data: any = None,
             and the data key should match
 
     Args:
-        data (any, optional): 响应的数据. Defaults to None.
+        data (Any, optional): 响应的数据. Defaults to None.
         message (str, optional): 响应的消息. Defaults to "success".
         status_code (int, optional): 业务状态码. Defaults to 200.
         http_status_code (int, optional): http状态码. Defaults to 200.
@@ -46,14 +46,14 @@ def make_resp(data: any = None,
     return generate_payload(data=data, message=message, status_code=status_code), http_status_code
 
 
-
 def error_resp(status_code, message=None):
-    payload = {'error': HTTP_STATUS_CODES.get(status_code, 'Unknown error')}
-    if message:
-        payload['message'] = message
-    response = jsonify(payload)
-    response.status_code = status_code
-    return response
+    abort(status_code=status_code, message=message)
+    # payload = {'error': HTTP_STATUS_CODES.get(status_code, 'Unknown error')}
+    # if message:
+    #     payload['message'] = message
+    # response = jsonify(payload)
+    # response.status_code = status_code
+    # return response
 
 
 def bad_request(message):
@@ -63,11 +63,38 @@ def bad_request(message):
 class Result:
 
     # 构造函数
-    def __init__(self, code, msg, data):
-        self.__code = code
-        self.__msg = msg
-        self.__data = data
+    def __init__(self,
+                 data: Any = None, status_code: int = 200,
+                 message: str = "success", http_status_code: int = 200) -> None:
+        """初始化响应数据类
 
+        Args:
+            data (Any, optional): 响应的数据. Defaults to None.
+            status_code (int, optional): 业务状态码. Defaults to 200.
+            message (str, optional): 响应消息. Defaults to "success".
+            http_status_code (int, optional): HTTP状态码. Defaults to 200.
+        """
+        self.status_code = status_code
+        self.message = message
+        self.data = data
+        self.http_status_code = http_status_code
+
+    def make_resp(self) -> Tuple[dict, int]:
+        # 调用上面的make_resp函数，确定方式后合并
+        return make_resp(self.data, self.message, self.status_code, self.http_status_code)
+
+    def err_resp(self) -> None:
+        # 是否需要这样处理error?
+        # error 响应体格式?
+        # 通用响应体中是否需要新增一个 'error' 字段？
+        abort(self.http_status_code,
+              self.message,
+              extra_data={
+                  "data": self.data,
+                  "status_code": self.status_code
+              })
+
+    # 是否需要 setter 与 getter？
     # getter
     @property
     def code(self):
