@@ -79,9 +79,14 @@ class Account(db.Model):
     __tablename__ = 'account'
     id = db.Column(db.Integer, primary_key=True) 
     cloud = db.Column(db.String(10), primary_key=True)     # AWS
-    account_id = db.Column(db.String(20), nullable=False, unique=True)  # Account ID
-    atvdate = db.Column(db.Date)            # Account Activation date
+    account_id = db.Column(db.String(20), nullable=False, unique=True)  # e.g. 567820214060
+    role = db.Column(db.String(100), nullable=False)       # e.g easyun-service-control-role    
+    type = db.Column(db.String(10))        # Global / GCR
+    atvdate = db.Column(db.Date)           # Account Activation date
     remind = db.Column(db.Boolean) 
+
+    def get_role(self):
+        return (self.role)
 
     def get_days(self):
         now = datetime.now()
@@ -105,44 +110,3 @@ class Datacenter(db.Model):
 
     def get_region(self):
         return (self.region)
-
-
-
-
-class Result :
- 
-    #构造函数
-    def __init__(self, code, msg, data):
-        self.__code = code
-        self.__msg = msg
-        self.__data = data
- 
-    #getter
-    @property
-    def code(self):
-        return self.__code
- 
-    #settter
-    @code.setter
-    def code(self, code):
-        self.__code = code
- 
-    #getter
-    @property
-    def msg(self):
-        return self.__msg
-
-    #setter
-    @msg.setter
-    def msg(self, msg):
-        self.__msg = msg
- 
-    #getter
-    @property
-    def data(self):
-        return self.__data
- 
-    #settter
-    @data.setter
-    def code(self, data):
-        self.__data = data

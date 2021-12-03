@@ -5,12 +5,14 @@
 '''
 import os
 import logging
-from apiflask import APIFlask
+from apiflask import APIFlask, Schema
+from apiflask.fields import String, Integer, Field, Nested
 from logging.handlers import RotatingFileHandler
 from flask_sqlalchemy import SQLAlchemy
 from config import env_config
 from flask_cors import CORS
 from flask_migrate import Migrate
+# from .common.result import BaseResponseSchema
 
 
 # define api version
@@ -19,9 +21,21 @@ ver = '/api/v1.0'
 # db variable initialization
 db = SQLAlchemy()
 
+class BaseResponseSchema(Schema):
+    message = String()
+    status_code = Integer()     # the HTTP_STATUS_CODES
+    data = Field()      # the data key
+
+
 def create_app(run_env):
     app = APIFlask(__name__, docs_path='/api/docs', redoc_path='/api/redoc') 
     app.config.from_object(env_config[run_env])
+
+    app.config['BASE_RESPONSE_SCHEMA'] = BaseResponseSchema
+    # the data key should match the data field name in the base response schema
+    # defaults to "data"
+    app.config['BASE_RESPONSE_DATA_KEY'] = 'data'
+
     CORS(app)
 
     db.init_app(app)

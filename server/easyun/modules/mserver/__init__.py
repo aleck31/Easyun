@@ -4,12 +4,7 @@
 @LastEditors: 
 '''
 from apiflask import APIBlueprint
-from easyun.common.models import Datacenter
-
-from flask import jsonify
-
-from easyun.common.auth import auth_token
-from easyun.common.models import Account, Result
+from easyun.common.models import Account, Datacenter
 
 # define api version
 ver = '/api/v1'
