@@ -91,7 +91,7 @@ class Result:
 
             ```
         Returns:
-            Tuple[dict, int]: [description]
+            Tuple[dict, int]: 响应体与http状态码
         """
         return make_resp(self.detail, self.message, self.status_code, self.http_status_code)
 
