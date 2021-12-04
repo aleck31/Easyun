@@ -27,7 +27,10 @@ class BaseResponseSchema(Schema):
     data = Field()      # the data key
 
 
-def create_app(run_env):
+def create_app(run_env=None):
+    if run_env is None:
+        run_env = os.getenv("FLASK_CONFIG", 'development')
+
     app = APIFlask(__name__, docs_path='/api/docs', redoc_path='/api/redoc') 
     app.config.from_object(env_config[run_env])
 
