@@ -10,20 +10,21 @@ from easyun.common.models import Account
 import boto3
 import os
 import json
-
+# from . import vpc_act
 # define api version
 ver = '/api/v1.0'
 
 bp = APIBlueprint('数据中心管理', __name__, url_prefix = ver) 
 
-REGION = "us-east-2"
+# REGION = "us-east-2"
 # REGION = Account().region
 FLAG = "Easyun"
 VERBOSE = 1
 
 # 云服务器参数定义
 NewDataCenter = {
-    'vpc-id' : 'vpc-e9dbb094',
+    'region': 'us-east-2',
+    'vpc_cidr' : '10.10.0.0/16',
     'pub_subnet1' : '192.168.1.0/24',
     'pub_subnet2' : '192.168.2.0/24',
     'pri_subnet1' : '192.168.3.0/24',
@@ -45,23 +46,24 @@ NewDataCenter = {
 
 
 class AddDatacenter(Schema):
-    vpc_id = String(required=True, validate=Length(0, 20))     #VPC name
-    pub_subnet1 = String(required=True) 
-    pub_subnet2 = String(required=True) 
-    pri_subnet1 = String(required=True) 
-    pri_subnet2 = String(required=True) 
+    region = String(required=True, validate=Length(0, 20))     #VPC name
+    vpc_cidr = String(required=True, validate=Length(0, 20))     #VPC name
+    public_subnet_1 = String(required=True)
+    public_subnet_2 = String(required=True)
+    private_subnet_1 = String(required=True)
+    private_subnet_2 = String(required=True)
     sgs1 = String(required=True ) 
     sgs2 = String(required=True ) 
     sgs3 = String(required=True ) 
     keypair = String(required=True)
 
 # 新建Datacenter
-@bp.post('/initial')
+@bp.post('/datacenter')
 @auth_required(auth_token)
 @input(AddDatacenter)
 @output({}, 201, description='add A new Datacenter')
 
-def add_datacenter(newdc):
+def add_datacenter(data):
     # create easyun vpc
     # create 2 x pub-subnet
     # create 2 x pri-subnet
@@ -71,39 +73,38 @@ def add_datacenter(newdc):
     # create 1 x easyun-route-nat
     # create 3 x easyun-sg-xxx
     # create 1 x key-easyun-user (默认keypair)
+    print(data)
+    region = data["region"]
+    vpc_cidr = data["vpc_cidr"]
+    public_subnet_1 = data["public_subnet_1"]
+    public_subnet_2 = data["public_subnet_2"]
+    private_subnet_1 = data["private_subnet_1"]
+    private_subnet_2 = data["private_subnet_2"]
 
-    ec2 = boto3.resource('ec2', region_name=REGION)
-
-    client1 = boto3.client('ec2', region_name=REGION)
+    vpc_resource = boto3.resource('ec2', region_name=region)
+    ec2 = boto3.client('ec2', region_name=region)
     # step 1: create VPC
-    #vpc = ec2.create_vpc(CidrBlock='192.168.0.0/16',DryRun=False)
-    vpc = ec2.create_vpc(CidrBlock='192.168.1.0/16',TagSpecifications=[{
+    vpc = vpc_resource.create_vpc(CidrBlock=vpc_cidr, TagSpecifications=[{
                                                 'ResourceType':'vpc',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
-                                                    }] )
-    # Assign a name to the VPC
-
-
-    vpc.create_tags(Tags=[{"Key": "FLAG2", "Value": "easyyun_vpc"}])
-    vpc.wait_until_available()
+                                                }]
+                                }] )
     print('VPC ID= '+ vpc.id )
 
     # step 2: create Internet Gateway
-
     # Create and Attach the Internet Gateway
-    ig = ec2.create_internet_gateway(TagSpecifications=[{
+    igw = ec2.create_internet_gateway(TagSpecifications=[{
                                                 'ResourceType':'internet-gateway',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }] )
-    vpc.attach_internet_gateway(InternetGatewayId=ig.id)
-    print('Internet Gateway ID= '+ ig.id)
-
+    print(f'Internet gateway created with: {json.dumps(igw, indent=4)}')
+    vpc.attach_internet_gateway(InternetGatewayId=igw['InternetGateway']['InternetGatewayId'])
+    print('Internet Gateway ID= '+ igw['InternetGateway']['InternetGatewayId'])
 
     # Create a route table and a public route to Internet Gateway
     route_table = vpc.create_route_table(TagSpecifications=[{
@@ -111,86 +112,109 @@ def add_datacenter(newdc):
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
-                                                    }])
+                                                }]
+                                         }])
     route = route_table.create_route(
         DestinationCidrBlock='0.0.0.0/0',
-        GatewayId=ig.id
-        
+        GatewayId=igw['InternetGateway']['InternetGatewayId']
+
     )
     print('Route Table ID= '+ route_table.id)
 
     # step 3: create 2 pub-subnet
 
     # Create public Subnet1
-    pub_subnet1 = ec2.create_subnet(CidrBlock='192.168.1.0/24', VpcId=vpc.id,TagSpecifications=[{
+    pub_subnet1 = ec2.create_subnet(CidrBlock=public_subnet_1, VpcId=vpc.id,TagSpecifications=[{
                                                 'ResourceType':'subnet',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    print('Public subnet1= '+ pub_subnet1.id)
+    print('Public subnet1= '+ pub_subnet1['Subnet']['SubnetId'])
 
 
 
 
     # associate the route table with the subnet
-    route_table.associate_with_subnet(SubnetId=pub_subnet1.id)
+    route_table.associate_with_subnet(SubnetId=pub_subnet1['Subnet']['SubnetId'])
 
     # Create public Subnet2
-    pub_subnet2 = ec2.create_subnet(CidrBlock='192.168.2.0/24', VpcId=vpc.id,TagSpecifications=[{
+    pub_subnet2 = ec2.create_subnet(CidrBlock=public_subnet_2, VpcId=vpc.id,TagSpecifications=[{
                                                 'ResourceType':'subnet',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    print('Public subnet2= '+pub_subnet2.id)
+    print('Public subnet2= '+pub_subnet2['Subnet']['SubnetId'])
 
     # associate the route table with the subnet
-    route_table.associate_with_subnet(SubnetId=pub_subnet2.id)
+    route_table.associate_with_subnet(SubnetId=pub_subnet2['Subnet']['SubnetId'])
 
     # step 3: create 2 private-subnet
     # Create private Subnet1
-    private_subnet1 = ec2.create_subnet(CidrBlock='192.168.3.0/24', VpcId=vpc.id,TagSpecifications=[{
+    private_subnet1 = ec2.create_subnet(CidrBlock=private_subnet_1, VpcId=vpc.id,TagSpecifications=[{
                                                 'ResourceType':'subnet',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    print('Private subnet1= '+private_subnet1.id)
+    print('Private subnet1= '+private_subnet1['Subnet']['SubnetId'])
 
     # associate the route table with the subnet
-    route_table.associate_with_subnet(SubnetId=private_subnet1.id)
+    route_table.associate_with_subnet(SubnetId=private_subnet1['Subnet']['SubnetId'])
 
     # Create private Subnet2
-    private_subnet2 = ec2.create_subnet(CidrBlock='192.168.4.0/24', VpcId=vpc.id,TagSpecifications=[{
+    private_subnet2 = ec2.create_subnet(CidrBlock=private_subnet_2, VpcId=vpc.id,TagSpecifications=[{
                                                 'ResourceType':'subnet',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    print('Private subnet2= '+private_subnet2.id)
+    print('Private subnet2= '+private_subnet2['Subnet']['SubnetId'])
 
     # associate the route table with the subnet
-    route_table.associate_with_subnet(SubnetId=private_subnet2.id)
+    route_table.associate_with_subnet(SubnetId=private_subnet2['Subnet']['SubnetId'])
 
     # step 2: create NAT Gateway and allocate EIP
-    eip = client1.allocate_address(Domain='vpc')
+    # allocate IPV4 address for NAT gateway
+    eip = ec2.allocate_address(Domain='vpc')
+    print(eip)
+    # create NAT gateway
+    response = ec2.create_nat_gateway(
+        AllocationId=eip['AllocationId'],
+        SubnetId=private_subnet1['Subnet']['SubnetId'],
+        TagSpecifications=[{
+            'ResourceType': 'natgateway',
+            'Tags': [{
+                'Key':
+                    'Flag',
+                'Value':
+                    'Easyun'
+            }]
+        }],
+        ConnectivityType='public')
+    nat_gateway_id = response['NatGateway']['NatGatewayId']
 
-    # Create and Attach the NAT Gateway
-    nat_gatway = client1.create_nat_gateway(SubnetId=private_subnet1.id,AllocationId=eip['AllocationId'],TagSpecifications=[{
-                                                'ResourceType':'natgateway',
-                                                'Tags': [{
-                                                    'Key':'FLAG',
-                                                    'Value':'easyun'
-                                                }] 
-                                                    }])
-    nat_gateway_id = nat_gatway['NatGateway']['NatGatewayId']
-    print('NAT gateway id= '+nat_gateway_id)
+    # wait until the NAT gateway is available
+    waiter = ec2.get_waiter('nat_gateway_available')
+    waiter.wait(NatGatewayIds=[nat_gateway_id])
+
+    # eip = ec2.allocate_address(Domain='vpc')
+    #
+    # # Create and Attach the NAT Gateway
+    # nat_gatway = ec2.create_nat_gateway(SubnetId=private_subnet1['Subnet']['SubnetId'],AllocationId=eip['AllocationId'],TagSpecifications=[{
+    #                                             'ResourceType':'natgateway',
+    #                                             'Tags': [{
+    #                                                 'Key':'FLAG',
+    #                                                 'Value':'easyun'
+    #                                             }]
+    #                                                 }])
+    # nat_gateway_id = nat_gatway['NatGateway']['NatGatewayId']
+    # print('NAT gateway id= '+nat_gateway_id)
 
             # wait until the NAT gateway is available
     # waiter = client1.get_waiter('nat_gateway_available')
@@ -205,12 +229,37 @@ def add_datacenter(newdc):
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=22)
-    secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=3389, ToPort=3389)
-    secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='icmp', FromPort=-1, ToPort=-1)
-    print('secure_group1= '+secure_group1)
+
+    ec2.authorize_security_group_ingress(
+        GroupId=secure_group1['GroupId'],
+        IpPermissions=[{
+            'IpProtocol': 'tcp',
+            'FromPort': 3389,
+            'ToPort': 3389,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }, {
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 22,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }, {
+            'IpProtocol': 'icmp',
+            'FromPort': -1,
+            'ToPort': -1,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }])
+    # secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=22)
+    # secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=3389, ToPort=3389)
+    # secure_group1.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='icmp', FromPort=-1, ToPort=-1)
+    print('secure_group1= '+secure_group1['GroupId'])
 
     # Step 5-2:  create security group easyun-sg-webapp
 
@@ -219,12 +268,28 @@ def add_datacenter(newdc):
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    secure_group2.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=80)
-    secure_group2.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=443)
-    print('secure_group2= '+secure_group2)
-
+    # secure_group2.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=80)
+    # secure_group2.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=443)
+    ec2.authorize_security_group_ingress(
+        GroupId=secure_group2['GroupId'],
+        IpPermissions=[{
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 80,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }, {
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 443,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }])
+    print('secure_group2= '+secure_group2['GroupId'])
 
     # Step 5-3:  create security group easyun-sg-database
 
@@ -233,26 +298,55 @@ def add_datacenter(newdc):
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
+                                                }]
                                                     }])
-    secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=3306)
-    secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=5432)
-    secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=1521)
-    secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=1443)
-    print('secure_group3= '+secure_group3)
+    # secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=3306)
+    # secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=5432)
+    # secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=1521)
+    # secure_group3.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=1443)
+    ec2.authorize_security_group_ingress(
+        GroupId=secure_group3['GroupId'],
+        IpPermissions=[{
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 3306,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }, {
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 5432,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        },{
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 1521,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }, {
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 1443,
+            'IpRanges': [{
+                'CidrIp': '0.0.0.0/0'
+            }]
+        }])
+    print('secure_group3= '+secure_group3['GroupId'])
 
     # create key pairs
     response = ec2.create_key_pair(KeyName='key-easyun-user',TagSpecifications=[{
-                                                'ResourceType':'key_pair',
+                                                'ResourceType':'key-pair',
                                                 'Tags': [{
                                                     'Key':'FLAG',
                                                     'Value':'easyun'
-                                                }] 
-                                                    }])
+                                                }]
+                                    }])
     print(response)
-    # test added by peng 123
-    # test added by peng 234
-    #
+
     return '' #status: successful
 
 class VpcListIn(Schema):
