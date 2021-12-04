@@ -1,9 +1,9 @@
 import React from 'react';
 
 const Dashboard = (): JSX.Element => (
-    <div>
+	<div>
         Dashboard
-    </div>
+	</div>
 );
 
 export default Dashboard;
