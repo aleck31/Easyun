@@ -24,17 +24,20 @@ db = SQLAlchemy()
 class BaseResponseSchema(Schema):
     message = String()
     status_code = Integer()     # the HTTP_STATUS_CODES
-    data = Field()      # the data key
+    detail = Field()      # the data key
 
 
-def create_app(run_env):
+def create_app(run_env=None):
+    if run_env is None:
+        run_env = os.getenv("FLASK_CONFIG", 'development')
+
     app = APIFlask(__name__, docs_path='/api/docs', redoc_path='/api/redoc') 
     app.config.from_object(env_config[run_env])
 
     app.config['BASE_RESPONSE_SCHEMA'] = BaseResponseSchema
     # the data key should match the data field name in the base response schema
     # defaults to "data"
-    app.config['BASE_RESPONSE_DATA_KEY'] = 'data'
+    app.config['BASE_RESPONSE_DATA_KEY'] = 'detail'
 
     CORS(app)
 
