@@ -13,8 +13,8 @@ import Home from '@/views/Home';
 import DataCenter from '@/views/DataCenter';
 import Resource from '@/views/Resource';
 import AddServer from '@/views/Resource/AddServer';
-import AddBucket from './views/Resource/Storage/AddBucket';
-import AddDisk from './views/Resource/Storage/AddDisk/insex';
+import AddBucket from '@/views/Resource/Storage/AddBucket';
+import AddDisk from '@/views/Resource/Storage/AddDisk/insex';
 import LoginPage from '@/views/Login';
 import Account from '@/views/Account';
 
@@ -30,7 +30,7 @@ const App = (): JSX.Element => {
 					<Route index element={<Resource/>}/>
 					<Route path="addServer" element={<AddServer/>}/>
 					<Route path="addBucket" element={<AddBucket/>}/>
-					<Route path="AddDisk" element={<AddDisk/>}/>
+					<Route path="addDisk" element={<AddDisk/>}/>
 				</Route>
 				<Route path="login" element={<LoginPage/>}/>
 				<Route path="404" element={<NotFound/>}/>
