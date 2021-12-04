@@ -62,9 +62,11 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     from .common import auth
     from .modules import mserver
+    from .modules import datacenter
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(mserver.bp)
+    app.register_blueprint(datacenter.bp)
     return None
 
 def configure_logger(app):

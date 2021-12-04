@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Datacenter creation module."""
-from apiflask import APIBlueprint, Schema, input, output, abort
+from apiflask import APIBlueprint, Schema, input, output, abort, auth_required
 from apiflask.fields import Integer, String
 from apiflask.validators import Length, OneOf
 from flask import jsonify
@@ -16,8 +16,8 @@ ver = '/api/v1.0'
 
 bp = APIBlueprint('数据中心管理', __name__, url_prefix = ver) 
 
-# REGION = "us-east-1"
-REGION = Account().region
+REGION = "us-east-2"
+# REGION = Account().region
 FLAG = "Easyun"
 VERBOSE = 1
 
@@ -57,8 +57,8 @@ class AddDatacenter(Schema):
 
 # 新建Datacenter
 @bp.post('/initial')
-@auth_token.login_required
-@input({AddDatacenter})
+@auth_required(auth_token)
+@input(AddDatacenter)
 @output({}, 201, description='add A new Datacenter')
 
 def add_datacenter(newdc):
