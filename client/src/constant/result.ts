@@ -3,4 +3,3 @@ export interface Result<T> {
     msg: string,
     data: T
 }
-
