@@ -9,6 +9,17 @@ from flask import jsonify
 from werkzeug.http import HTTP_STATUS_CODES, http_date
 from typing import Any, Union, Tuple
 
+{
+    "detail": {  # 存放data
+        # "api_msg": "", 
+        # "api_status_code": 200 
+        # "api_detail": {}
+    },
+    "message": "Not Found",  # 响应消息
+    "status_code": 200  # 业务码
+    # "error": {}, # 存放错误内容
+}
+
 
 def generate_payload(data: Any = None,
                      message: str = "success",
@@ -93,34 +104,41 @@ class Result:
                   "data": self.data,
                   "status_code": self.status_code
               })
+        # apiflask 的错误响应格式:
+        # {
+        #     "detail": {
+
+        #     },
+        #     "message": "Not Found"
+        # }
 
     # 是否需要 setter 与 getter？
     # getter
-    @property
-    def code(self):
-        return self.__code
+    # @property
+    # def code(self):
+    #     return self.__code
 
-    # settter
-    @code.setter
-    def code(self, code):
-        self.__code = code
+    # # settter
+    # @code.setter
+    # def code(self, code):
+    #     self.__code = code
 
-    # getter
-    @property
-    def msg(self):
-        return self.__msg
+    # # getter
+    # @property
+    # def msg(self):
+    #     return self.__msg
 
-    # setter
-    @msg.setter
-    def msg(self, msg):
-        self.__msg = msg
+    # # setter
+    # @msg.setter
+    # def msg(self, msg):
+    #     self.__msg = msg
 
-    # getter
-    @property
-    def data(self):
-        return self.__data
+    # # getter
+    # @property
+    # def data(self):
+    #     return self.__data
 
-    # settter
-    @data.setter
-    def code(self, data):
-        self.__data = data
+    # # settter
+    # @data.setter
+    # def code(self, data):
+    #     self.__data = data
