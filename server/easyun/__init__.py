@@ -24,7 +24,7 @@ db = SQLAlchemy()
 class BaseResponseSchema(Schema):
     message = String()
     status_code = Integer()     # the HTTP_STATUS_CODES
-    data = Field()      # the data key
+    detail = Field()      # the data key
 
 
 def create_app(run_env=None):
@@ -37,7 +37,7 @@ def create_app(run_env=None):
     app.config['BASE_RESPONSE_SCHEMA'] = BaseResponseSchema
     # the data key should match the data field name in the base response schema
     # defaults to "data"
-    app.config['BASE_RESPONSE_DATA_KEY'] = 'data'
+    app.config['BASE_RESPONSE_DATA_KEY'] = 'detail'
 
     CORS(app)
 
