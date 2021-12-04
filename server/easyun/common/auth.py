@@ -3,16 +3,16 @@
 @Description: The user auth module.
 @LastEditors: 
 '''
-from flask import jsonify
-from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, auth_required, Schema, input, output
+from flask import jsonify, make_response
+from apiflask import APIBlueprint, HTTPTokenAuth, HTTPBasicAuth, auth_required, Schema, input, output, doc
 from apiflask.validators import Length, OneOf
 from apiflask.fields import String, Integer
 from .. import db
 from .models import User
-from .errors import error_response, bad_request
+from .result import make_resp, error_resp, bad_request
 
 # define api version
-ver = '/api/v1.0'
+ver = '/api/v1'
 
 bp = APIBlueprint('用户认证', __name__, url_prefix = ver+'/user') 
 
@@ -28,7 +28,7 @@ def verify_password(username, password):
 
 @auth_basic.error_handler
 def basic_auth_error(status):
-    return error_response(status)
+    return error_resp(status)
 
 @auth_token.verify_token
 def verify_token(token):
@@ -38,12 +38,12 @@ def verify_token(token):
 
 @auth_token.error_handler
 def token_auth_error(status):
-    return error_response(status)
+    return error_resp(status)
 
 
 class UserInSchema(Schema):
-    username = String(required=True, validate=Length(0, 10))
-    password = String(required=True, validate=Length(0, 20))
+    username = String(required=True, validate=Length(0, 20))
+    password = String(required=True, validate=Length(0, 30))
 
 class UserOutSchema(Schema):
     id = Integer()
@@ -51,16 +51,17 @@ class UserOutSchema(Schema):
     email = String()
 
 class NewUser(Schema):
-    username = String(required=True, validate=Length(0, 10))
-    password = String(required=True, validate=Length(0, 20))
-    email = String(required=True, validate=Length(0, 20))
+    username = String(required=True, validate=Length(0, 20))
+    password = String(required=True, validate=Length(0, 30))
+    email = String(required=True, validate=Length(0, 80))
 
 
 @bp.post('/adduser')
 @input(NewUser)
-@output({}, 201, description='Add a new user.')
+@output(UserOutSchema, 201)
+@doc(tag='【仅限测试用】', operation_id='Add New User')
 def add_user(newuser):
-    '''向数据库添加新用户【仅限测试用】'''
+    '''向数据库添加新用户'''
     if 'username' not in newuser or 'password' not in newuser:
         return bad_request('must include username and password fields')
     if User.query.filter_by(username=newuser['username']).first():
@@ -71,7 +72,7 @@ def add_user(newuser):
     user.from_dict(newuser, new_user=True)
     db.session.add(user)
     db.session.commit()
-    return user.username
+    return make_resp("Add a new user.", 201, user)
 
 
 class NewPassword(Schema):
@@ -88,6 +89,12 @@ def change_passowrd(newpwd):
     return ''
 
 
+class TokenOutSchema(Schema):
+    api_code = Integer()
+    api_msg = String()
+    token = String()
+
+
 @bp.post('/auth')
 @input(UserInSchema)
 def post_auth_token(user):
@@ -101,18 +108,21 @@ def post_auth_token(user):
         # token = auth_token.current_user.get_token()
         token = login_user.get_token()
         db.session.commit()
-        return jsonify({'token': token})
+        return make_resp('Success', 200, {'token': token}) ,201
+        # jsonify({'token': token})
     else:
-        return error_response(401)
+        return error_resp(401)
 
 
 @bp.get('/token')
 @auth_required(auth_basic)
+@doc(tag='【仅限测试用】', operation_id='Get token')
 def get_auth_token():
-    '''基于auth_basic, Get方法获取token【仅限测试用】'''
+    '''基于auth_basic, Get方法获取token'''
     token = auth_basic.current_user.get_token()
     db.session.commit()
-    return jsonify({'token': token})
+    # return jsonify({'token': token})
+    return make_resp('Success', 200, {'token': token})
 
 
 @bp.delete('/logout')

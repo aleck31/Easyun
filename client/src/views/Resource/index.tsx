@@ -1,8 +1,4 @@
 import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { CHeader } from '@/components/Logic/CHeader';
 import { CFooter } from '@/components/Logic/CFooter';
 import { CButton } from '@/components/Common/CButton';
@@ -29,9 +25,7 @@ function TabPanel(props: TabPanelProps) {
 			{...other}
 		>
 			{value === index && (
-				<Box sx={{p: 3}}>
-					<Typography component={'span'}>{children}</Typography>
-				</Box>
+				<div>{children}</div>
 			)}
 		</div>
 	);
@@ -54,19 +48,9 @@ export const Resource = (): JSX.Element => {
 	};
 
 	return (
-		<div>
-			<CHeader/>
-			<Box sx={{width: '100%'}}>
-				<Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-					<Tabs value={value} onChange={handleChange} aria-label="resource tab">
-						<Tab label="Server" {...a11yProps(0)} />
-						<Tab label="Storage" {...a11yProps(1)} />
-						<Tab label="Database" {...a11yProps(2)} />
-						<Tab label="Networking" {...a11yProps(3)} />
-						<Tab label="Containers" {...a11yProps(4)} />
-						<Tab label="Backups" {...a11yProps(5)} />
-					</Tabs>
-				</Box>
+		<>
+			<div>
+				<CHeader/>
 				<TabPanel value={value} index={0}>
 					<div className={classnames('flex', 'flex-col', 'justify-center', 'items-center', 'm-10')}>
 						<div className={classnames('text-3xl')}> You have no servers right now.</div>
@@ -102,9 +86,8 @@ export const Resource = (): JSX.Element => {
 				<TabPanel value={value} index={5}>
 					Backups
 				</TabPanel>
-			</Box>
-			<CFooter/>
-		</div>
+			</div>
+			<CFooter/></>
 	);
 };
 
