@@ -144,4 +144,7 @@ easyun.db
 !.yarn/versions
 .pnp.*
 
+
 .vscode
+.idea
+.DS_Store
