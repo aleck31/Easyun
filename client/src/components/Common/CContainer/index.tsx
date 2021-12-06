@@ -1,5 +1,5 @@
 import React from 'react';
-import { CPartialLoading } from '@/components/Common/CPartialLoading/CPartialLoading';
+import { CPartialLoading } from '@/components/Common/CPartialLoading';
 import { TTailwindString } from '@@/tailwindcss-classnames';
 
 export interface ContainerProps {
