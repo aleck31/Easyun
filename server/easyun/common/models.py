@@ -71,20 +71,22 @@ class User(db.Model):
         return user
 
 
+
 class Account(db.Model):
     """
     Create a Account table
     """
     __tablename__ = 'account'
-    id = db.Column(db.Integer, primary_key=True)    
-    aws_id = db.Column(db.String(20), nullable=False, unique=True)  # AWS Account ID
-    role = db.Column(db.String(120))           # AWS IAM rale name
-    region = db.Column(db.String(120))      # Current Main Region
-    atvdate = db.Column(db.Date)            # Activation date
+    id = db.Column(db.Integer, primary_key=True) 
+    cloud = db.Column(db.String(10), primary_key=True)     # AWS
+    account_id = db.Column(db.String(20), nullable=False, unique=True)  # e.g. 567820214060
+    role = db.Column(db.String(100), nullable=False)       # e.g easyun-service-control-role    
+    type = db.Column(db.String(10))        # Global / GCR
+    atvdate = db.Column(db.Date)           # Account Activation date
     remind = db.Column(db.Boolean) 
 
-    def get_region(self):
-        return (self.region)
+    def get_role(self):
+        return (self.role)
 
     def get_days(self):
         now = datetime.now()
@@ -93,40 +95,18 @@ class Account(db.Model):
         return days
 
 
-class Result :
- 
-    #构造函数
-    def __init__(self, code, msg, data):
-        self.__code = code
-        self.__msg = msg
-        self.__data = data
- 
-    #getter
-    @property
-    def code(self):
-        return self.__code
- 
-    #settter
-    @code.setter
-    def code(self, code):
-        self.__code = code
- 
-    #getter
-    @property
-    def msg(self):
-        return self.__msg
+class Datacenter(db.Model):
+    """
+    Create a Account table
+    """
+    __tablename__ = 'datacenter'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, unique=True)    # Datacenter Name: Easyun
+    cloud = db.Column(db.String(20), nullable=False)                # Cloud Provider: AWS
+    account_id = db.Column(db.String(30), nullable=False)           # Account ID
+    region = db.Column(db.String(120))          # Deployed Region
+    vpc_id = db.Column(db.String(30))           # VPC ID 
+    credate = db.Column(db.Date)                # Datacenter Create date
 
-    #setter
-    @msg.setter
-    def msg(self, msg):
-        self.__msg = msg
- 
-    #getter
-    @property
-    def data(self):
-        return self.__data
- 
-    #settter
-    @data.setter
-    def code(self, data):
-        self.__data = data
+    def get_region(self):
+        return (self.region)

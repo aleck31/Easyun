@@ -144,3 +144,5 @@ easyun.db
 !.yarn/versions
 .pnp.*
 .idea
+.DS_Store
+

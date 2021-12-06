@@ -43,3 +43,33 @@
     ├─config.py                 配置文件
     └─run.py                    启动脚本
 ```
+
+## 启动项目
+
+clone:
+```
+$ git clone https://github.com/aleck31/Easyun.git
+$ cd Easyun/server
+```
+
+create & activate virtual env then install dependency:
+with venv + pip:
+```
+$ python -m venv env  # use `virtualenv env` for Python2, use `python3 ...` for Python3 on Linux & macOS
+$ source env/bin/activate  # use `env\Scripts\activate` on Windows
+$ pip install -r requirements/min.txt
+```
+
+run:
+with flask cli:
+```
+$ flask run -p 6660
+* Running on http://127.0.0.1:6660/
+```
+with python:
+```
+$ python run.py # use python3 run.py for python3 on Linux & macOS
+```
+
+api docs:
+open url: http://127.0.0.1:6660/ with browser

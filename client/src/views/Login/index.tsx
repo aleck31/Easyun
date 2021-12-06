@@ -20,9 +20,8 @@ const LoginPage = (): JSX.Element => {
 		if (!username || !password) {
 			return;
 		}
-		console.log(username, password);
 		const res = await userService.login<LoginRes>(username, password);
-		console.log(res.token);
+		console.log(res.data);
 		navigate('/home');
 	};
 

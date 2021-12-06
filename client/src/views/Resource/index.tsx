@@ -5,6 +5,7 @@ import { CButton } from '@/components/Common/CButton';
 import { classnames } from '@@/tailwindcss-classnames';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import StoragePage from '@/views/Resource/Storage';
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -62,7 +63,7 @@ export const Resource = (): JSX.Element => {
 								 classes={classnames('bg-yellow-550', 'text-white', 'rounded-3xl', 'h-10', 'w-32', 'px-5', 'my-5')}>Add
 							Server</CButton>
 						<div className={classnames('text-blue-500')}>
-							<a href="https://aws.amazon.com/cn/ec2" target="_blank" rel="noreferrer">
+							<a href="https://aws.amazon.com/cn/ec2" target="_blank" rel="noreferrer"> 
 								Learn more about instance
 								<Icon className={classnames('inline-block', 'mx-1', 'text-blue-500')}
 									  icon="akar-icons:link-out" width="20" height="20" fr={undefined}/>
@@ -71,7 +72,7 @@ export const Resource = (): JSX.Element => {
 					</div>
 				</TabPanel>
 				<TabPanel value={value} index={1}>
-					Storage
+					<StoragePage />
 				</TabPanel>
 				<TabPanel value={value} index={2}>
 					Databases
