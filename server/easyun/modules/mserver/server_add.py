@@ -10,7 +10,7 @@ from apiflask.validators import Length, OneOf
 from flask import jsonify
 from werkzeug.wrappers import response
 from easyun.common.auth import auth_token
-from easyun.common.result import make_resp, error_resp, bad_request
+from easyun.common.result import make_resp, error_resp, bad_request,Result
 from . import bp, REGION, FLAG
 
 
@@ -73,27 +73,41 @@ class AddSvr(Schema):
         required=True
     )
 
+class NewSvrSchema(Schema):
+    NewSvrId = String()
 
 # 新增server
 @bp.post('/add')
-@auth_required(auth_token)
+# @auth_required(auth_token)
 @input(AddSvr)
-@output({}, 204)
+@output(NewSvrSchema)
 def add_server(newsvr):
     '''新建云服务器'''
-    RESOURCE = boto3.resource('ec2', region_name=REGION)
-    # server = RESOURCE.create_instances(newsvr)
-    server = RESOURCE.create_instances(
-        MaxCount = newsvr['Number'],
-        MinCount = newsvr['Number'],
-        ImageId = newsvr['ImageId'],
-        InstanceType = newsvr['InstanceType'],
-        SubnetId = newsvr['SubnetId'],
-        SecurityGroupIds = newsvr['SecurityGroupIds'],
-        KeyName = newsvr['KeyName'],
-        BlockDeviceMappings = newsvr['BlockDeviceMappings'],
-        TagSpecifications = newsvr['tag_spec']    
-    )
+    try:
+        RESOURCE = boto3.resource('ec2', region_name=REGION)
+        # server = RESOURCE.create_instances(newsvr)
+        server = RESOURCE.create_instances(
+            MaxCount = newsvr['Number'],
+            MinCount = newsvr['Number'],
+            ImageId = newsvr['ImageId'],
+            InstanceType = newsvr['InstanceType'],
+            SubnetId = newsvr['SubnetId'],
+            SecurityGroupIds = newsvr['SecurityGroupIds'],
+            KeyName = newsvr['KeyName'],
+            BlockDeviceMappings = newsvr['BlockDeviceMappings'],
+            TagSpecifications = newsvr['tag_spec']    
+        )
+        response = Result(
+            detail={'NewSvrId':server[0].id}, status_code=3001
+        )
+        # server = [{'id':'3131442142'}]
+        # response = Result(
+        #     detail={'NewSvrId':server[0]['id']}, status_code=3001
+        # )
 
-    return make_resp("add a new server", 204, server[0].id)
-    # return jsonify({'NewServer ID': server[0].id})
+        return response.make_resp()
+    except Exception:
+        response = Result(
+            message='server creation failed', status_code=3001,http_status_code=400
+        )
+        response.err_resp()
