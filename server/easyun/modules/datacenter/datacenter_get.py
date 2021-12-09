@@ -12,6 +12,8 @@ from datetime import date, datetime
 from . import bp, REGION, FLAG
 from flask import jsonify
 
+from ...common.result import Result
+
 NewDataCenter = {
     'region': 'us-east-2',
     'vpc_cidr' : '10.10.0.0/16',
@@ -72,8 +74,9 @@ def get_datacenter_region():
             {'Name': 'group-name','Values': [REGION],},
         ])
 
-
-    return (NewDataCenter['region']) 
+    response = Result(detail=NewDataCenter['region'], status_code=2001,
+                      message="ok", http_status_code=200)
+    return response.make_resp()
 
 
 @bp.get('/datacenter/AZ')

@@ -12,6 +12,8 @@ import os
 import json
 # from . import vpc_act
 # define api version
+from ...common.result import Result
+
 ver = '/api/v1.0'
 
 bp = APIBlueprint('数据中心管理', __name__, url_prefix = ver) 
@@ -65,7 +67,6 @@ class AddDatacenter(Schema):
 @auth_required(auth_token)
 @input(AddDatacenter)
 @output({}, 201, description='add A new Datacenter')
-
 def add_datacenter(data):
     # create easyun vpc
     # create 2 x pub-subnet
@@ -386,9 +387,9 @@ def get_vpc(vpc_id):
     vpclist = {}
     print(json.dumps(vpcs, sort_keys=True, indent=4))
 
-    return jsonify(vpcs)
-    
-    return '' #datacenter id
+    response = Result(detail=vpcs, status_code=2001,
+                      message="ok", http_status_code=200)
+    return response.make_resp()
 
 
 # 删除Datacenter
@@ -396,7 +397,6 @@ def get_vpc(vpc_id):
 @auth_token.login_required
 @input({})
 @output({}, 201, description='Remove the Datacenter')
-
 def remove_datacenter(newdc):
     # delete easyun vpc
     # delete 2 x pub-subnet
