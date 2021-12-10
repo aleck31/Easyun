@@ -4,14 +4,14 @@
 @LastEditors: 
 '''
 import boto3
-from apiflask import Schema, input, output, auth_required
-from apiflask.fields import Integer, String, List, Dict
+from apiflask import input, output, auth_required
 from apiflask.validators import Length, OneOf
 from easyun.common.auth import auth_token
 from datetime import date, datetime
 from . import bp, REGION, FLAG
 from flask import jsonify
 
+from .schemas import DataCenterListOut
 from ...common.result import Result
 
 NewDataCenter = {
@@ -37,24 +37,6 @@ NewDataCenter = {
         ]
 }
 
-
-class DataCenterListIn(Schema):
-    vpc_id = String()
-
-
-class DataCenterListOut(Schema):
-    region_name = String()
-    az = String()
-    ins_status = String()
-    ins_type = String()
-    vcpu = Integer()
-    ram = String()
-    subnet_id = String()
-    ssubnet_id = String()
-    key_name = String()
-    category = String()
-
-
 @bp.get('/datacenter/region')
 @auth_required(auth_token)
 @output(DataCenterListOut, description='Get DataCenter Region Info')
@@ -77,7 +59,6 @@ def get_datacenter_region():
     response = Result(detail=NewDataCenter['region'], status_code=2001,
                       message="ok", http_status_code=200)
     return response.make_resp()
-
 
 @bp.get('/datacenter/AZ')
 @auth_required(auth_token)

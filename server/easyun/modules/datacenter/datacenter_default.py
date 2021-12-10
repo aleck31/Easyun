@@ -4,14 +4,13 @@
 @LastEditors: 
 '''
 import boto3
-from apiflask import Schema, input, output, auth_required
-from apiflask.fields import Integer, String, List, Dict
-from apiflask.validators import Length, OneOf
+from apiflask import input, output, auth_required
 from easyun.common.auth import auth_token
 from datetime import date, datetime
 from . import bp, REGION, FLAG
 from flask import jsonify
 
+from .schemas import DataCenterListOut
 from ...common.result import Result
 
 NewDataCenter = {
@@ -35,24 +34,6 @@ NewDataCenter = {
         }
         ]
 }
-
-
-class DataCenterListIn(Schema):
-    vpc_id = String()
-
-
-class DataCenterListOut(Schema):
-    region_name = String()
-    az = String()
-    ins_status = String()
-    ins_type = String()
-    vcpu = Integer()
-    ram = String()
-    subnet_id = String()
-    ssubnet_id = String()
-    key_name = String()
-    category = String()
-
 
 @bp.get('/default')
 @auth_required(auth_token)

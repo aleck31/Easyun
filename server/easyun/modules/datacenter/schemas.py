@@ -6,7 +6,9 @@
   @file:    schemas.py
   @desc:
 """
-
+from apiflask import Schema
+from apiflask.fields import Integer, String
+from apiflask.validators import Length, OneOf
 
 class AddDatacenter(Schema):
     region = String(required=True, validate=Length(0, 20))     #VPC name
@@ -33,3 +35,20 @@ class VpcListOut(Schema):
     private_subnet2 = String()
     sgs = String()
     keypair = String()
+
+
+class DataCenterListIn(Schema):
+    vpc_id = String()
+
+
+class DataCenterListOut(Schema):
+    region_name = String()
+    az = String()
+    ins_status = String()
+    ins_type = String()
+    vcpu = Integer()
+    ram = String()
+    subnet_id = String()
+    ssubnet_id = String()
+    key_name = String()
+    category = String()

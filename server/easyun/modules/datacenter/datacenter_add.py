@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Datacenter creation module."""
-from apiflask import APIBlueprint, Schema, input, output, abort, auth_required
-from apiflask.fields import Integer, String
-from apiflask.validators import Length, OneOf
+from apiflask import APIBlueprint, input, output, abort, auth_required
 from flask import jsonify
 from datetime import date, datetime
 from easyun.common.auth import auth_token
@@ -12,6 +10,7 @@ import os
 import json
 # from . import vpc_act
 # define api version
+from .schemas import VpcListIn, VpcListOut, AddDatacenter
 from ...common.result import Result
 
 ver = '/api/v1.0'
@@ -22,9 +21,6 @@ REGION = "us-east-1"
 # REGION = Account().region
 FLAG = "Easyun"
 VERBOSE = 1
-
-from . import datacenter_add
-
 
 # 云服务器参数定义
 NewDataCenter = {
@@ -48,19 +44,6 @@ NewDataCenter = {
         }
         ]
 }
-
-
-class AddDatacenter(Schema):
-    region = String(required=True, validate=Length(0, 20))     #VPC name
-    vpc_cidr = String(required=True, validate=Length(0, 20))     #VPC name
-    public_subnet_1 = String(required=True)
-    public_subnet_2 = String(required=True)
-    private_subnet_1 = String(required=True)
-    private_subnet_2 = String(required=True)
-    sgs1 = String(required=True ) 
-    sgs2 = String(required=True ) 
-    sgs3 = String(required=True ) 
-    keypair = String(required=True)
 
 # 新建Datacenter
 @bp.post('/datacenter')
@@ -350,21 +333,7 @@ def add_datacenter(data):
                                                 }]
                                     }])
     print(response)
-
     return '' #status: successful
-
-class VpcListIn(Schema):
-    vpc_id = String()
-
-
-class VpcListOut(Schema):
-    vpc_id = String()
-    pub_subnet1 = String() 
-    pub_subnet2 = String() 
-    private_subnet1 = String() 
-    private_subnet2 = String() 
-    sgs = String() 
-    keypair = String()
 
 # 获取当前Datacenter环境信息
 @bp.get('/datacenters')
@@ -390,7 +359,6 @@ def get_vpc(vpc_id):
     response = Result(detail=vpcs, status_code=2001,
                       message="ok", http_status_code=200)
     return response.make_resp()
-
 
 # 删除Datacenter
 @bp.post('/cleanup')
